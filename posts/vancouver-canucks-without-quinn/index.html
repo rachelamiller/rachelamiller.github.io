@@ -9,7 +9,7 @@
 <meta name="author" content="Rachel Miller">
 <meta name="dcterms.date" content="2025-04-01">
 
-<title>An Analysis of the Vancouver Canucks without their Capitan Quinn Hughes – Rachel's analysis of the Vancouver Canucks</title>
+<title>An Analysis of the Vancouver Canucks without their Capitann Quinn Hughes – Rachel’s analysis of the Vancouver Canucks</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -149,7 +149,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">An Analysis of the Vancouver Canucks without their Capitan Quinn Hughes</h1>
+      <h1 class="title">An Analysis of the Vancouver Canucks without their Capitann Quinn Hughes</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">vancouver</div>
                 <div class="quarto-category">nhl</div>
@@ -190,14 +190,762 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p>The Vancouver Canucks have seen a lot of injury this season.</p>
+<p>The Vancouver Canucks have seen a lot of injury this season. One of whom being their capitan Quinn Hughes. He has played 61 games so far this season and is leading his team in points despite being out for so many.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">+</span><span class="dv">1</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggalt)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>hockey25 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/hockeylogs2025.csv"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>vancouver <span class="ot">&lt;-</span> hockey25 <span class="sc">|&gt;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(team_name <span class="sc">==</span> <span class="st">"Vancouver Canucks"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>x) </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>oppvan <span class="ot">&lt;-</span> hockey25 <span class="sc">|&gt;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(opp <span class="sc">==</span> <span class="st">"VAN"</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>teamstats <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/Vancouver Canucks Data - Sheet1.csv"</span>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>name_pts <span class="ot">&lt;-</span> teamstats <span class="sc">|&gt;</span> </span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Name, PTS, GP)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>name_pts <span class="sc">|&gt;</span> </span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_label</span>(</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">GP =</span> <span class="st">"Games Played"</span>, </span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">PTS =</span> <span class="st">"Points"</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Who has the most points on the team in the games they have played? "</span>, </span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"IDK Yet"</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> <span class="fu">tab_style</span>(</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">style =</span> <span class="fu">cell_text</span>(<span class="at">color =</span> <span class="st">"black"</span>,<span class="at">weight =</span> <span class="st">"bold"</span>, <span class="at">align =</span> <span class="st">"left"</span>),</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">locations =</span> <span class="fu">cells_title</span>(<span class="st">"title"</span>)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> <span class="fu">tab_style</span>(</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">style =</span> <span class="fu">cell_text</span>(<span class="at">color =</span> <span class="st">"black"</span>, <span class="at">align =</span> <span class="st">"left"</span>),  <span class="at">locations =</span> <span class="fu">cells_title</span>(<span class="st">"subtitle"</span>)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_source_note</span>( </span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">source_note =</span> <span class="fu">md</span>(<span class="st">"**By:**Rachel Miller | **Source:** NHL: Vancouver Canucks Team Stats"</span> )</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_style</span>(</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">locations =</span> <span class="fu">cells_column_labels</span>(<span class="at">columns =</span> <span class="fu">everything</span>()),</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">style =</span> <span class="fu">list</span>(</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cell_borders</span>(<span class="at">sides =</span> <span class="st">"bottom"</span>, <span class="at">weight =</span> <span class="fu">px</span>(<span class="dv">3</span>)),</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cell_text</span>(<span class="at">weight =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">12</span>)</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_style</span>(</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">style =</span> <span class="fu">list</span>(</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cell_fill</span>(<span class="at">color =</span> <span class="st">"#00205B"</span>), </span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cell_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>    ), </span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">locations =</span> <span class="fu">cells_body</span>(</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>      <span class="at">rows =</span> Name <span class="sc">==</span> <span class="st">"Q. Hughes D"</span></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>  ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 2</code></pre>
+<div class="cell-output-display">
+<div id="rbkfcfetum" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#rbkfcfetum table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#rbkfcfetum thead, #rbkfcfetum tbody, #rbkfcfetum tfoot, #rbkfcfetum tr, #rbkfcfetum td, #rbkfcfetum th {
+  border-style: none;
+}
+
+#rbkfcfetum p {
+  margin: 0;
+  padding: 0;
+}
+
+#rbkfcfetum .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#rbkfcfetum .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#rbkfcfetum .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#rbkfcfetum .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#rbkfcfetum .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#rbkfcfetum .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rbkfcfetum .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#rbkfcfetum .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#rbkfcfetum .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#rbkfcfetum .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#rbkfcfetum .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#rbkfcfetum .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#rbkfcfetum .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#rbkfcfetum .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#rbkfcfetum .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#rbkfcfetum .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#rbkfcfetum .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#rbkfcfetum .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#rbkfcfetum .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rbkfcfetum .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#rbkfcfetum .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#rbkfcfetum .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#rbkfcfetum .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rbkfcfetum .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#rbkfcfetum .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#rbkfcfetum .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rbkfcfetum .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rbkfcfetum .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#rbkfcfetum .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rbkfcfetum .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#rbkfcfetum .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rbkfcfetum .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#rbkfcfetum .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rbkfcfetum .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#rbkfcfetum .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rbkfcfetum .gt_left {
+  text-align: left;
+}
+
+#rbkfcfetum .gt_center {
+  text-align: center;
+}
+
+#rbkfcfetum .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#rbkfcfetum .gt_font_normal {
+  font-weight: normal;
+}
+
+#rbkfcfetum .gt_font_bold {
+  font-weight: bold;
+}
+
+#rbkfcfetum .gt_font_italic {
+  font-style: italic;
+}
+
+#rbkfcfetum .gt_super {
+  font-size: 65%;
+}
+
+#rbkfcfetum .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#rbkfcfetum .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#rbkfcfetum .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#rbkfcfetum .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#rbkfcfetum .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#rbkfcfetum .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#rbkfcfetum .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#rbkfcfetum .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#rbkfcfetum div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_heading header">
+<th colspan="3" class="gt_heading gt_title gt_font_normal" style="text-align: left; color: #000000; font-weight: bold;">Who has the most points on the team in the games they have played?</th>
+</tr>
+<tr class="gt_heading even">
+<th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="text-align: left; color: #000000;">IDK Yet</th>
+</tr>
+<tr class="gt_col_headings header">
+<th id="Name" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" style="border-bottom-width: 3px; border-bottom-style: solid; border-bottom-color: #000000; font-size: 12; font-weight: bold" scope="col">Name</th>
+<th id="PTS" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="border-bottom-width: 3px; border-bottom-style: solid; border-bottom-color: #000000; font-size: 12; font-weight: bold" scope="col">Points</th>
+<th id="GP" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="border-bottom-width: 3px; border-bottom-style: solid; border-bottom-color: #000000; font-size: 12; font-weight: bold" scope="col">Games Played</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="Name" style="background-color: #00205B; color: #FFFFFF">Q. Hughes D</td>
+<td class="gt_row gt_right" headers="PTS" style="background-color: #00205B; color: #FFFFFF">70</td>
+<td class="gt_row gt_right" headers="GP" style="background-color: #00205B; color: #FFFFFF">61</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Name">B. Boeser RW</td>
+<td class="gt_row gt_right" headers="PTS">46</td>
+<td class="gt_row gt_right" headers="GP">68</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Name">E. Pettersson C</td>
+<td class="gt_row gt_right" headers="PTS">45</td>
+<td class="gt_row gt_right" headers="GP">64</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Name">C. Garland RW</td>
+<td class="gt_row gt_right" headers="PTS">44</td>
+<td class="gt_row gt_right" headers="GP">74</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Name">J. DeBrusk LW</td>
+<td class="gt_row gt_right" headers="PTS">44</td>
+<td class="gt_row gt_right" headers="GP">75</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Name">P. Suter C</td>
+<td class="gt_row gt_right" headers="PTS">42</td>
+<td class="gt_row gt_right" headers="GP">74</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Name">J.T. Miller C</td>
+<td class="gt_row gt_right" headers="PTS">35</td>
+<td class="gt_row gt_right" headers="GP">40</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Name">K. Sherwood LW</td>
+<td class="gt_row gt_right" headers="PTS">35</td>
+<td class="gt_row gt_right" headers="GP">71</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Name">F. Hronek D</td>
+<td class="gt_row gt_right" headers="PTS">28</td>
+<td class="gt_row gt_right" headers="GP">54</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Name">T. Myers D</td>
+<td class="gt_row gt_right" headers="PTS">24</td>
+<td class="gt_row gt_right" headers="GP">71</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Name">T. Blueger C</td>
+<td class="gt_row gt_right" headers="PTS">23</td>
+<td class="gt_row gt_right" headers="GP">75</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Name">N. Hoglander LW</td>
+<td class="gt_row gt_right" headers="PTS">21</td>
+<td class="gt_row gt_right" headers="GP">66</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Name">D. Heinen LW</td>
+<td class="gt_row gt_right" headers="PTS">18</td>
+<td class="gt_row gt_right" headers="GP">51</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Name">D. Joshua C</td>
+<td class="gt_row gt_right" headers="PTS">11</td>
+<td class="gt_row gt_right" headers="GP">50</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Name">C. Soucy D</td>
+<td class="gt_row gt_right" headers="PTS">10</td>
+<td class="gt_row gt_right" headers="GP">59</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Name">D. Forbort D</td>
+<td class="gt_row gt_right" headers="PTS">9</td>
+<td class="gt_row gt_right" headers="GP">49</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Name">E. Brannstrom D</td>
+<td class="gt_row gt_right" headers="PTS">8</td>
+<td class="gt_row gt_right" headers="GP">28</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Name">D. O'Connor LW *</td>
+<td class="gt_row gt_right" headers="PTS">8</td>
+<td class="gt_row gt_right" headers="GP">24</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Name">M. Pettersson D *</td>
+<td class="gt_row gt_right" headers="PTS">7</td>
+<td class="gt_row gt_right" headers="GP">24</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Name">A. Raty C</td>
+<td class="gt_row gt_right" headers="PTS">7</td>
+<td class="gt_row gt_right" headers="GP">26</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Name">F. Chytil C *</td>
+<td class="gt_row gt_right" headers="PTS">6</td>
+<td class="gt_row gt_right" headers="GP">15</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Name">M. Sasson C</td>
+<td class="gt_row gt_right" headers="PTS">6</td>
+<td class="gt_row gt_right" headers="GP">24</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Name">P. Di Giuseppe LW</td>
+<td class="gt_row gt_right" headers="PTS">6</td>
+<td class="gt_row gt_right" headers="GP">20</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Name">N. Aman C</td>
+<td class="gt_row gt_right" headers="PTS">6</td>
+<td class="gt_row gt_right" headers="GP">19</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Name">J. Lekkerimaki RW</td>
+<td class="gt_row gt_right" headers="PTS">5</td>
+<td class="gt_row gt_right" headers="GP">23</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Name">D. Sprong RW *</td>
+<td class="gt_row gt_right" headers="PTS">3</td>
+<td class="gt_row gt_right" headers="GP">9</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Name">V. Desharnais D</td>
+<td class="gt_row gt_right" headers="PTS">3</td>
+<td class="gt_row gt_right" headers="GP">34</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Name">Elias N. Pettersson D</td>
+<td class="gt_row gt_right" headers="PTS">2</td>
+<td class="gt_row gt_right" headers="GP">21</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Name">V. Mancini D *</td>
+<td class="gt_row gt_right" headers="PTS">2</td>
+<td class="gt_row gt_right" headers="GP">9</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Name">L. Karlsson C</td>
+<td class="gt_row gt_right" headers="PTS">2</td>
+<td class="gt_row gt_right" headers="GP">16</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Name">A. Bains LW</td>
+<td class="gt_row gt_right" headers="PTS">1</td>
+<td class="gt_row gt_right" headers="GP">13</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Name">M. Friedman D</td>
+<td class="gt_row gt_right" headers="PTS">0</td>
+<td class="gt_row gt_right" headers="GP">5</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Name">N. Juulsen D</td>
+<td class="gt_row gt_right" headers="PTS">0</td>
+<td class="gt_row gt_right" headers="GP">35</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Name">NA</td>
+<td class="gt_row gt_right" headers="PTS">0</td>
+<td class="gt_row gt_right" headers="GP">3</td>
+</tr>
+</tbody><tfoot class="gt_sourcenotes">
+<tr class="odd">
+<td colspan="3" class="gt_sourcenote"><strong>By:</strong>Rachel Miller | <strong>Source:</strong> NHL: Vancouver Canucks Team Stats</td>
+</tr>
+</tfoot>
+
+</table>
+
+</div>
+</div>
+</div>
+<p>Quinn Hughes has 70 points in 61 games played, the next highest point scorer has 46 points in 68 games. Hughes has played seven less games than Brock Boeser but has 24 more points than him.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>stepwins <span class="ot">&lt;-</span> hockey25 <span class="sc">|&gt;</span> </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Win =</span> <span class="fu">case_when</span>(rslt <span class="sc">==</span> <span class="st">"W"</span> <span class="sc">~</span> <span class="dv">1</span>, rslt <span class="sc">==</span> <span class="st">"L"</span> <span class="sc">~</span> <span class="dv">0</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(team_name) <span class="sc">|&gt;</span> </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(date) <span class="sc">|&gt;</span> </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cumulative_wins =</span> <span class="fu">cumsum</span>(Win)) <span class="sc">|&gt;</span> </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>vcstep <span class="ot">&lt;-</span> stepwins <span class="sc">|&gt;</span> <span class="fu">filter</span>(team_name <span class="sc">==</span> <span class="st">"Vancouver Canucks"</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>wjstep <span class="ot">&lt;-</span> stepwins <span class="sc">|&gt;</span> <span class="fu">filter</span>(team_name <span class="sc">==</span> <span class="st">"Winnipeg Jets"</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>dates <span class="ot">&lt;-</span> vcstep <span class="sc">|&gt;</span> </span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    date <span class="sc">==</span> <span class="fu">as.Date</span>(<span class="st">"2024-12-28"</span>) <span class="sc">|</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    date <span class="sc">==</span> <span class="fu">as.Date</span>(<span class="st">"2024-12-31"</span>) <span class="sc">|</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    date <span class="sc">==</span> <span class="fu">as.Date</span>(<span class="st">"2025-01-02"</span>) <span class="sc">|</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    date <span class="sc">==</span> <span class="fu">as.Date</span>(<span class="st">"2025-01-03"</span>) <span class="sc">|</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    date <span class="sc">==</span> <span class="fu">as.Date</span>(<span class="st">"2025-02-02"</span>) <span class="sc">|</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    date <span class="sc">==</span> <span class="fu">as.Date</span>(<span class="st">"2025-02-04"</span>) <span class="sc">|</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    date <span class="sc">==</span> <span class="fu">as.Date</span>(<span class="st">"2025-02-06"</span>) <span class="sc">|</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    date <span class="sc">==</span> <span class="fu">as.Date</span>(<span class="st">"2025-02-08"</span>) <span class="sc">|</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    date <span class="sc">==</span> <span class="fu">as.Date</span>(<span class="st">"2025-02-22"</span>) <span class="sc">|</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    date <span class="sc">==</span> <span class="fu">as.Date</span>(<span class="st">"2025-02-23"</span>) <span class="sc">|</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    date <span class="sc">==</span> <span class="fu">as.Date</span>(<span class="st">"2025-03-05"</span>) <span class="sc">|</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    date <span class="sc">==</span> <span class="fu">as.Date</span>(<span class="st">"2025-03-07"</span>) <span class="sc">|</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    date <span class="sc">==</span> <span class="fu">as.Date</span>(<span class="st">"2025-03-09"</span>) <span class="sc">|</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    date <span class="sc">==</span> <span class="fu">as.Date</span>(<span class="st">"2025-03-11"</span>)</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_step</span>(<span class="at">data =</span> stepwins, <span class="fu">aes</span>(<span class="at">x=</span>date, <span class="at">y=</span>cumulative_wins, <span class="at">group =</span> team_name), <span class="at">color=</span><span class="st">"grey"</span>) <span class="sc">+</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_step</span>(<span class="at">data =</span> vcstep, <span class="fu">aes</span>(<span class="at">x=</span>date, <span class="at">y=</span>cumulative_wins), <span class="at">color=</span><span class="st">"#041C2C"</span>) <span class="sc">+</span> </span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> dates, <span class="fu">aes</span>(<span class="at">x=</span>date, <span class="at">y=</span>cumulative_wins), <span class="at">color=</span><span class="st">"#00205B"</span>) <span class="sc">+</span> </span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_step</span>(<span class="at">data =</span> wjstep, <span class="fu">aes</span>(<span class="at">x=</span>date, <span class="at">y=</span>cumulative_wins), <span class="at">color=</span><span class="st">"#AC162C"</span>) <span class="sc">+</span> </span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x=</span>(<span class="fu">as.Date</span>(<span class="st">"2025-04-05"</span>)), <span class="at">y=</span><span class="dv">35</span>, <span class="at">label=</span><span class="st">"Vancouver Canucks"</span>) <span class="sc">+</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x=</span>(<span class="fu">as.Date</span>(<span class="st">"2025-04-10"</span>)), <span class="at">y=</span><span class="dv">50</span>, <span class="at">label=</span><span class="st">"Winnipeg Jets"</span>) <span class="sc">+</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Do the Canucks lose more when Quinn Hughes is not in the game?"</span>, <span class="at">subtitle=</span><span class="st">"Or are they just having a rough season?"</span>, <span class="at">caption =</span> <span class="st">"Source: Hockey Scrapper | By: Rachel Miller"</span>) <span class="sc">+</span> </span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 
