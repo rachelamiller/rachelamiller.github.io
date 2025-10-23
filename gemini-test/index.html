@@ -3,351 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[Your Name] - Web App Portfolio</title>
+    <title>Rachel Miller's Portfolio</title>
     <style>
-        /* --- Google Fonts --- */
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@300;400&display=swap');
-
-        /* --- CSS Variables (Easy to change colors) --- */
-        :root {
-            --primary-color: #0a66c2; /* A blue inspired by LinkedIn */
-            --secondary-color: #333;
-            --light-color: #f4f4f4;
-            --dark-color: #222;
-            --background-color: #ffffff;
-            --font-primary: 'Montserrat', sans-serif;
-            --font-secondary: 'Roboto', sans-serif;
-        }
-
-        /* --- Basic Reset --- */
-        * {
+        /* --- Global Styles --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: var(--font-secondary);
+            background-color: #f4f4f4;
+            color: #333;
             line-height: 1.6;
-            background-color: var(--background-color);
-            color: var(--secondary-color);
         }
 
-        /* --- Utility Classes --- */
         .container {
-            max-width: 1100px;
-            margin: auto;
-            overflow: hidden;
-            padding: 0 2rem;
+            max-width: 960px;
+            margin: 20px auto;
+            padding: 0 20px;
         }
 
-        /* --- Header / Nav --- */
-        .main-header {
-            background: var(--background-color);
-            padding: 1rem 0;
-            border-bottom: 1px solid #ddd;
-            position: sticky;
-            top: 0;
-            z-index: 10;
+        h1, h2, h3 {
+            color: #333;
         }
 
-        .main-header .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        h2 {
+            border-bottom: 3px solid #D00000; /* UNL Scarlet */
+            padding-bottom: 10px;
+            margin-top: 40px;
         }
 
-        .main-header .logo {
-            font-family: var(--font-primary);
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
+        a {
+            color: #D00000;
             text-decoration: none;
         }
 
-        .main-nav ul {
-            display: flex;
-            list-style: none;
+        a:hover {
+            text-decoration: underline;
         }
 
-        .main-nav li {
-            margin-left: 1.5rem;
-        }
-
-        .main-nav a {
-            text-decoration: none;
-            color: var(--secondary-color);
-            font-weight: 700;
-            transition: color 0.3s ease;
-        }
-
-        .main-nav a:hover {
-            color: var(--primary-color);
-        }
-
-        /* --- Hero Section --- */
+        /* --- Hero Header --- */
         .hero {
-            background: var(--light-color);
-            padding: 4rem 0;
+            background-color: #D00000;
+            color: #ffffff;
+            padding: 60px 20px;
             text-align: center;
-        }
-
-        .hero-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        .hero-image {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            background: #ccc; /* Placeholder for a profile picture */
-            margin-bottom: 1.5rem;
-            border: 4px solid var(--primary-color);
-            object-fit: cover;
-            /* TODO: Add your profile picture here. 
-              E.g., <img src="./your-photo.jpg" alt="Your Name" class="hero-image">
-              Or, delete this and the <h1> will just be at the top.
-            */
+            border-bottom: 5px solid #ac0000;
         }
 
         .hero h1 {
-            font-family: var(--font-primary);
-            font-size: 3rem;
-            margin-bottom: 0.5rem;
-            color: var(--dark-color);
+            color: #ffffff;
+            font-size: 3.5em;
+            margin: 0;
         }
 
-        .hero .headline {
-            font-size: 1.5rem;
+        .hero .tagline {
+            font-size: 1.3em;
             font-weight: 300;
-            color: var(--primary-color);
-            margin-bottom: 2rem;
-        }
-
-        .btn {
-            display: inline-block;
-            background: var(--primary-color);
-            color: #fff;
-            padding: 0.75rem 1.5rem;
-            text-decoration: none;
-            border-radius: 5px;
-            font-family: var(--font-primary);
-            font-weight: 700;
-            transition: background 0.3s ease;
-        }
-
-        .btn:hover {
-            background: #084e94;
-        }
-
-        /* --- Section Styling --- */
-        .section {
-            padding: 4rem 0;
-        }
-
-        .section-title {
-            font-family: var(--font-primary);
-            font-size: 2.5rem;
-            text-align: center;
-            margin-bottom: 2rem;
-            font-weight: 700;
+            margin-top: 10px;
         }
 
         /* --- About Section --- */
         #about {
-            background: #fff;
-        }
-        
-        #about p {
-            font-size: 1.1rem;
-            text-align: center;
-            max-width: 800px;
-            margin: auto;
-        }
-
-        /* --- Apps/Projects Section --- */
-        #apps {
-            background: var(--light-color);
-        }
-
-        .apps-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-        }
-
-        .app-card {
-            background: #fff;
+            background-color: #ffffff;
+            padding: 30px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
+        }
+
+        #about p {
+            font-size: 1.1em;
+        }
+
+        /* --- Projects Section --- */
+        .project-grid {
+            display: grid;
+            /* Creates a responsive grid:
+               - On small screens: 1 column
+               - On larger screens: 2-3 columns
+            */
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .project-card {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 25px;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        
-        .app-card:hover {
+
+        .project-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
 
-        .app-card-image {
-            width: 100%;
-            height: 180px;
-            background-color: #e0e0e0; /* Placeholder */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #888;
-            font-style: italic;
-            /* TODO: Replace with an <img src="path/to/image.jpg"> */
+        .project-card h3 {
+            margin-top: 0;
+            color: #D00000;
         }
 
-        .app-card-content {
-            padding: 1.5rem;
+        .project-card .btn {
+            display: inline-block;
+            background-color: #D00000;
+            color: #ffffff;
+            padding: 10px 18px;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: background-color 0.2s ease;
         }
 
-        .app-card-content h3 {
-            font-family: var(--font-primary);
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .app-card-content p {
-            font-size: 1rem;
-            margin-bottom: 1rem;
+        .project-card .btn:hover {
+            background-color: #a00000;
+            text-decoration: none;
         }
 
         /* --- Footer --- */
-        .main-footer {
-            background: var(--dark-color);
-            color: #fff;
+        footer {
             text-align: center;
-            padding: 2rem 0;
-        }
-        
-        .social-links {
-            list-style: none;
-            display: flex;
-            justify-content: center;
-            margin-bottom: 1rem;
-        }
-        
-        .social-links li {
-            margin: 0 1rem;
-        }
-        
-        .social-links a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: 700;
-            transition: color 0.3s ease;
+            margin-top: 50px;
+            padding: 20px;
+            color: #777;
+            border-top: 1px solid #eee;
         }
 
-        .social-links a:hover {
-            color: var(--primary-color);
-        }
-
-        /* --- Responsive Design --- */
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            
-            .hero .headline {
-                font-size: 1.2rem;
-            }
-
-            .main-header .container {
-                flex-direction: column;
-            }
-
-            .main-header .logo {
-                margin-bottom: 0.5rem;
-            }
-        }
     </style>
 </head>
 <body>
 
-    <header class="main-header">
-        <div class="container">
-            <a href="#" class="logo">[Your Name]</a>
-            <nav class="main-nav">
-                <ul>
-                    <li><a href="#about">About Me</a></li>
-                    <li><a href="#apps">Web Apps</a></li>
-                    <li><a href="https://github.com/[your-username]" target="_blank" rel="noopener noreferrer">GitHub</a></li>
-                </ul>
-            </nav>
-        </div>
+    <header class="hero">
+        <h1>Rachel Miller</h1>
+        <p class="tagline">Digital Storyteller & Future Sports Administrator</p>
     </header>
 
-    <section class="hero">
-        <div class="container hero-content">
-            <div class="hero-image"></div>
-            
-            <h1>[Your Name Here]</h1>
-            <p class="headline">[Your Headline - e.g., Aspiring Software Developer | Data Analyst | Student]</p>
-            <a href="#apps" class="btn">View My Apps</a>
-        </div>
-    </section>
+    <div class="container">
 
-    <section id="about" class="section">
-        <div class="container">
-            <h2 class="section-title">About Me</h2>
+        <section id="about">
+            <h2>About Me</h2>
             <p>
-                Welcome to my page! I am a passionate developer and creator based in [Your City/State]. I specialize in [Your Key Skill, e.g., front-end development, Python, etc.] and love building useful and fun web applications in my spare time. This site serves as a portfolio for my projects. Feel free to look around!
+                Welcome! I'm a Junior at the <strong>University of Nebraska - Lincoln</strong>, pursuing a double major in Sports Media and Communications and Broadcasting.
             </p>
-        </div>
-    </section>
+            <p>
+                My passion lies at the intersection of media and athletics. After graduation, I plan to enter the world of Sports Administration. My ultimate goal is to manage a professional sports team—preferably on the ice! This site serves as a collection of my web projects and other digital creations.
+            </p>
+        </section>
 
-    <section id="apps" class="section">
-        <div class="container">
-            <h2 class="section-title">My Web Apps</h2>
-            <div class="apps-grid">
+        <section id="projects">
+            <h2>My Projects</h2>
+            <p>Here are a few of the web apps and projects I've been working on.</p>
 
-                <article class="app-card">
-                    <div class="app-card-image">
-                        (App Screenshot)
-                    </div>
-                    <div class="app-card-content">
-                        <h3>[App 1 Title]</h3>
-                        <p>[Short description of what your app does and what technologies you used.]</p>
-                        <a href="[URL_TO_LIVE_APP]" class="btn" target="_blank" rel="noopener noreferrer">Launch App</a>
-                    </div>
-                </article>
+            <div class="project-grid">
 
-                <article class="app-card">
-                    <div class="app-card-image">(App Screenshot)</div>
-                    <div class="app-card-content">
-                        <h3>[App 2 Title]</h3>
-                        <p>[Short description of what your app does and what technologies you used.]</p>
-                        <a href="[URL_TO_LIVE_APP]" class="btn" target="_blank" rel="noopener noreferrer">Launch App</a>
-                    </div>
-                </article>
+                <div class="project-card">
+                    <h3>Project Title 1</h3>
+                    <p>A brief description of what this application does, what tech it uses (like JavaScript, HTML, CSS), and what its purpose is.</p>
+                    <a href="#" class="btn">Launch App</a>
+                </div>
+
+                <div class="project-card">
+                    <h3>Project Title 2</h3>
+                    <p>A brief description of what this application does, what tech it uses (like JavaScript, HTML, CSS), and what its purpose is.</p>
+                    <a href="#" class="btn">View on GitHub</a>
+                </div>
                 
-                <article class="app-card">
-                    <div class="app-card-image">(App Screenshot)</div>
-                    <div class="app-card-content">
-                        <h3>[App 3 Title]</h3>
-                        <p>[Short description of what your app does and what technologies you used.]</p>
-                        <a href="[URL_TO_LIVE_APP]" class="btn" target="_blank" rel="noopener noreferrer">Launch App</a>
-                    </div>
-                </article>
+                <div class="project-card">
+                    <h3>Coming Soon</h3>
+                    <p>I'm currently working on a new project. Check back soon for updates!</p>
+                </div>
 
             </div>
-        </div>
-    </section>
+        </section>
 
-    <footer class="main-footer">
-        <div class="container">
-            <ul class="social-links">
-                <li><a href="www.linkedin.com/in/rachelamiller2003" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
-                <li><a href="https://github.com/[your-username]" target="_blank" rel="noopener noreferrer">GitHub</a></li>
-                </ul>
-            <p>&copy; 2024 [Your Name]. All rights reserved.</p>
-        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Rachel Miller</p>
+        <p>
+            <a href="#">GitHub</a> &bull;
+            <a href="#">LinkedIn</a>
+        </p>
     </footer>
 
 </body>
