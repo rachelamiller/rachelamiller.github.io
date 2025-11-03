@@ -519,7 +519,11 @@
                     tile.position.z += deltaZ;
 
                     // Check if tile is behind the camera (needs recycling)
-                    if (tile.position.z > camera.position.z) {
+                    // OLD BUGGY LINE: if (tile.position.z > camera.position.z) {
+                    // --- FIX ---
+                    // We recycle the tile only after it's well past the camera (pos 10)
+                    // and the player (pos 0). Let's recycle at Z=20.
+                    if (tile.position.z > 20) { 
                         // Remove tile from scene and array
                         scene.remove(tile);
                         tiles.shift(); // Remove from front of array
@@ -644,5 +648,6 @@
     </script>
 </body>
 </html>
+
 
 
