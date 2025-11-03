@@ -31,8 +31,7 @@
             justify-content: center;
             color: white;
             text-align: center;
-            /* Clicks pass through the overlay *except* for the message box */
-            pointer-events: none; 
+            /* FIX: Removed pointer-events: none; so the menu button is clickable. */
         }
         
         #message-box {
@@ -519,10 +518,7 @@
                     tile.position.z += deltaZ;
 
                     // Check if tile is behind the camera (needs recycling)
-                    // OLD BUGGY LINE: if (tile.position.z > camera.position.z) {
-                    // --- FIX ---
-                    // We recycle the tile only after it's well past the camera (pos 10)
-                    // and the player (pos 0). Let's recycle at Z=20.
+                    // FIX: Changed recycling point from camera.position.z (10) to 20 to give the headline time to display.
                     if (tile.position.z > 20) { 
                         // Remove tile from scene and array
                         scene.remove(tile);
@@ -574,12 +570,13 @@
             // Calculate the trigger's absolute Z position
             const triggerZ = nextHeadline.tile.position.z + nextHeadline.trigger.position.z;
 
-            // a) Display headline when player is approaching
+            // a) Display headline when player is approaching (z > player.z)
+            // Show headline when it's between 60 units and the player
             if (triggerZ > player.position.z && triggerZ < player.position.z + 60) {
                  if (currentHeadline !== nextHeadline) {
                     currentHeadline = nextHeadline;
                     headlineDisplay.textContent = nextHeadline.headline.headline;
-                    statusMessageIngame.textContent = "Make your choice!"; // Use in-game status
+                    statusMessageIngame.textContent = "Make your choice! (Fake = Left, Real = Right)"; // Use in-game status
                     messageBox.style.opacity = 1; // Show the headline box
                 }
             }
@@ -648,6 +645,7 @@
     </script>
 </body>
 </html>
+
 
 
 
