@@ -216,8 +216,6 @@
         let playerSpeed = 0.4; // Initial speed
         let headlineQueue = []; // Holds upcoming headlines
         
-        // FIX 1: Change initial spawn point Z from -TILE_DEPTH * 3 (-90) to -TILE_DEPTH (-30).
-        // This makes the first headline gate (trigger Z = -40) appear much sooner.
         let nextHeadlineTileZ = -TILE_DEPTH; // Z-position to spawn the next headline
 
         const HEADLINE_ADVANCE_DISTANCE = TILE_DEPTH * 4; // Generate a new headline every 4 tiles
@@ -258,6 +256,56 @@
             }
         }
 
+        // --- Journalist Model Function ---
+
+        /**
+         * Creates a composite 3D model of a figure resembling a journalist.
+         * The base of the feet will be at Y=0.
+         */
+        function createJournalist() {
+            const group = new THREE.Group();
+            
+            // 1. Body (Jacket/Suit)
+            const bodyGeometry = new THREE.BoxGeometry(1.2, 2.5, 1);
+            const bodyMaterial = new THREE.MeshPhongMaterial({ color: 0x1a1a1a, shininess: 50 }); // Dark gray/black suit
+            const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+            body.position.y = 1.25; // Center is at Y=1.25, so base is at Y=0
+            group.add(body);
+
+            // 2. Head
+            const headGeometry = new THREE.SphereGeometry(0.4, 16, 16);
+            const headMaterial = new THREE.MeshPhongMaterial({ color: 0xffe0bd, shininess: 80 }); // Light skin color
+            const head = new THREE.Mesh(headGeometry, headMaterial);
+            head.position.y = 2.8;
+            group.add(head);
+            
+            // 3. Microphone (Small cylinders)
+            const micGroup = new THREE.Group();
+            
+            // Mic Handle
+            const handleGeometry = new THREE.CylinderGeometry(0.08, 0.08, 0.5, 12);
+            const handleMaterial = new THREE.MeshPhongMaterial({ color: 0xcccccc }); // Silver handle
+            const handle = new THREE.Mesh(handleGeometry, handleMaterial);
+            handle.position.y = 0.25;
+            micGroup.add(handle);
+
+            // Mic Head (Cube for "news logo")
+            const micHeadGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+            const micHeadMaterial = new THREE.MeshPhongMaterial({ color: 0xff6600 }); // Orange for "NEWS"
+            const micHead = new THREE.Mesh(micHeadGeometry, micHeadMaterial);
+            micHead.position.y = 0.5;
+            micGroup.add(micHead);
+            
+            // Position the microphone group relative to the body
+            micGroup.position.set(0.6, 2.3, 0.2); // Held near the shoulder/chest
+            micGroup.rotation.z = Math.PI / 4; // Tilted slightly upwards
+            
+            group.add(micGroup);
+            
+            return group;
+        }
+
+
         // --- 3. CORE GAME FUNCTIONS ---
 
         /**
@@ -271,7 +319,8 @@
 
             // Camera (Player's viewpoint)
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 5, 10); // Positioned above and behind the player
+            // Adjusted camera position for the taller journalist figure
+            camera.position.set(0, 4.5, 8); 
             camera.rotation.x = -Math.PI / 8; // Look slightly down
 
             // Renderer (Draws the scene)
@@ -286,12 +335,9 @@
             directionalLight.position.set(0, 10, 5);
             scene.add(directionalLight);
 
-            // Player (simple cylinder for visibility)
-            const playerGeometry = new THREE.CylinderGeometry(0.7, 0.7, 2, 32);
-            // Phong material is shiny
-            const playerMaterial = new THREE.MeshPhongMaterial({ color: 0x00ffff, shininess: 100 });
-            player = new THREE.Mesh(playerGeometry, playerMaterial);
-            player.position.set(LANE_POSITIONS[currentLane], 1.5, 0); // Start at Z=0
+            // Player (Now the Journalist Group)
+            player = createJournalist();
+            player.position.set(LANE_POSITIONS[currentLane], 0, 0); // Start at Y=0
             scene.add(player);
 
             // Load high score
@@ -311,7 +357,6 @@
             overlay.style.display = 'flex';
             messageBox.style.display = 'none'; // Make sure message box is hidden
             statusMessage.textContent = "Press Start to begin. Choose Real or Fake to survive!";
-            // headlineDisplay.textContent = "Welcome to the Runner!"; // This is inside messageBox, so it's hidden
 
             // Start render loop
             animate();
@@ -338,7 +383,6 @@
             player.position.x = LANE_POSITIONS[currentLane];
             player.position.z = 0;
             playerSpeed = 0.4; // Reset speed
-            // FIX 2: Ensure this is reset to the new, closer initial position on game start.
             nextHeadlineTileZ = -TILE_DEPTH;
             headlineQueue = [];
             currentHeadline = null;
@@ -481,18 +525,6 @@
             realGate.position.set(LANE_POSITIONS[2], gateHeight / 2, obstacleZ);
             tileGroup.add(realGate);
             
-            // Block off the INCORRECT lane
-            const incorrectLaneIndex = headlineData.isReal ? 0 : 2; // 0=FAKE, 2=REAL
-            const incorrectX = LANE_POSITIONS[incorrectLaneIndex];
-            // The blocker is actually not needed since the player is blocked by the gates themselves.
-            // But let's keep the logic for visualization/potential future use.
-            const blockerMaterial = headlineData.isReal ? fakeGateMaterial : realGateMaterial;
-            
-            const blocker = new THREE.Mesh(gateGeometry, blockerMaterial);
-            blocker.position.set(incorrectX, gateHeight / 2, obstacleZ);
-            // Adding the blocker to the scene is implicitly handled by the gates already added.
-            // Let's remove the redundant blocker variable declaration as it's not strictly used here.
-
             // Store the data for player checks
             headlineQueue.push({
                 headline: headlineData,
@@ -580,8 +612,8 @@
             // Calculate the trigger's absolute Z position
             const triggerZ = nextHeadline.tile.position.z + nextHeadline.trigger.position.z;
 
-            // a) Display headline when player is approaching (z < player.z, meaning it's in front)
-            // FIXED LOGIC: Check if triggerZ is within the range [player.z - displayDistance, player.z]
+            // a) Display headline when player is approaching
+            // FIXED LOGIC: Check if triggerZ is between -displayDistance (far away) and 0 (player position)
             const displayDistance = 80; 
             if (triggerZ > player.position.z - displayDistance && triggerZ < player.position.z) {
                  if (currentHeadline !== nextHeadline) {
@@ -656,7 +688,3 @@
     </script>
 </body>
 </html>
-
-
-
-
