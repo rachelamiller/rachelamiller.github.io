@@ -4,55 +4,100 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Real or Fake Headline Runner</title>
+    <!-- Imports the Three.js 3D library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
-        body { margin: 0; overflow: hidden; background-color: #0d0d1e; }
-        canvas { display: block; }
+        /* --- Basic Setup --- */
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            background-color: #0d0d1e; /* Dark blue space background */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        canvas { 
+            display: block; 
+        }
+
+        /* --- UI Overlay --- */
         #overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            display: flex;
+            display: flex; /* Used to center the message box */
             flex-direction: column;
             align-items: center;
             justify-content: center;
             color: white;
-            font-family: 'Arial', sans-serif;
             text-align: center;
-            pointer-events: none; /* Allows clicks to pass through */
+            /* Clicks pass through the overlay *except* for the message box */
+            pointer-events: none; 
         }
+        
         #message-box {
-            background-color: rgba(0, 0, 0, 0.75);
-            padding: 30px 40px;
+            background-color: rgba(0, 0, 0, 0.85);
+            padding: 25px 35px;
             border-radius: 15px;
-            border: 3px solid #00ffff;
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
-            pointer-events: auto;
+            border: 3px solid #00ffff; /* Cyan border */
+            box-shadow: 0 0 35px rgba(0, 255, 255, 0.6);
+            pointer-events: auto; /* This box *can* be clicked */
             max-width: 90%;
+            transition: opacity 0.3s ease-in-out;
         }
+
+        /* --- Text Elements --- */
+        .title { 
+            font-size: 2.8em; 
+            color: #00ffff; 
+            margin-bottom: 10px; 
+            font-weight: bold;
+            text-shadow: 0 0 10px #00ffff;
+        }
+        
         #headline-display {
-            font-size: 1.5em;
+            font-size: 1.4em;
             font-weight: bold;
             color: #ffcc00; /* Yellow */
             margin-bottom: 20px;
             min-height: 50px;
             text-shadow: 0 0 5px #ff6600;
+            line-height: 1.4;
         }
+
+        .subtitle { 
+            font-size: 1.1em; 
+            margin-bottom: 20px; 
+            color: #cccccc;
+        }
+        
+        #final-score {
+            font-size: 1.8em; 
+            margin-bottom: 15px;
+            color: #00ff00; /* Green score */
+            font-weight: bold;
+            display: none; /* Hidden by default */
+        }
+        
+        /* --- In-Game Score --- */
         #score-display, #high-score-display {
             position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 1.5em;
+            top: 20px;
+            left: 20px;
+            font-size: 1.8em;
             color: #00ff00;
-            text-shadow: 0 0 5px #000000;
+            font-weight: bold;
+            text-shadow: 0 0 8px #000000;
+            opacity: 0; /* Hidden until game starts */
+            transition: opacity 0.5s;
         }
         #high-score-display {
-            top: 40px;
+            top: 55px;
+            color: #00ffff;
+            font-size: 1.2em;
         }
-        .title { font-size: 3em; color: #00ffff; margin-bottom: 10px; }
-        .subtitle { font-size: 1.2em; margin-bottom: 20px; }
+
+        /* --- Button --- */
         .button {
             background-color: #00ffff;
             color: #0d0d1e;
@@ -67,51 +112,50 @@
         }
         .button:hover {
             background-color: #00b3b3;
-            transform: translateY(-2px);
+            transform: translateY(-2px); /* Slight lift on hover */
         }
+
+        /* --- Instructions --- */
         .instructions {
-            margin-top: 20px;
+            margin-top: 25px;
             font-size: 1.1em;
             color: #cccccc;
+            line-height: 1.5;
         }
         .instructions span {
-            color: #ff6600;
+            color: #ff6600; /* Orange highlight */
             font-weight: bold;
         }
 
-        /* Mobile optimization */
+        /* --- Mobile Responsive Design --- */
         @media (max-width: 600px) {
             .title { font-size: 2em; }
             #headline-display { font-size: 1.2em; }
             .subtitle { font-size: 1em; }
             .button { font-size: 1em; padding: 10px 20px; }
             .instructions { font-size: 0.9em; }
-            #score-display, #high-score-display { font-size: 1em; }
+            #score-display, #high-score-display { font-size: 1em; left: 10px; top: 10px;}
+            #high-score-display { top: 35px; }
         }
     </style>
 </head>
 <body>
+    <!-- This div holds all the UI text, buttons, and scores -->
     <div id="overlay">
         <div id="message-box">
             <div class="title">REAL OR FAKE RUNNER</div>
             <div id="headline-display"></div>
             <div id="status-message" class="subtitle">Press Start to begin.</div>
-            <div id="final-score" style="font-size: 2em; margin-bottom: 15px; display: none;"></div>
+            <div id="final-score"></div>
             <button id="start-button" class="button">Start Game</button>
-            // --- 1. HEADLINES DATA ---
-// This is the data from the JSON file, embedded directly into the script.
-const HEADLINES = [
-  { "headline": "A Town in Italy Has Outlawed the Wearing of Flip-Flops.", "isReal": true },
-  { "headline": "Scientists Are Training Dogs to Sniff Out Computer Hard Drives.", "isReal": true },
-  { "headline": "Finland's Air Force Removed a Swastika from Its Official Emblem.", "isReal": true },
-  // ...and so on for all 20 headlines...
-];
             <div class="instructions">
-                Use **Left Arrow (←)** for **FAKE** news.<br>
-                Use **Right Arrow (→)** for **REAL** news.
+                Use **Left Arrow (←)** for <span>FAKE</span> news.<br>
+                Use **Right Arrow (→)** for <span>REAL</span> news.
             </div>
         </div>
     </div>
+    
+    <!-- These are separate for in-game display -->
     <div id="score-display">Score: 0</div>
     <div id="high-score-display">High Score: 0</div>
 
@@ -144,24 +188,24 @@ const HEADLINES = [
         // --- 2. THREE.JS SCENE SETUP ---
         let scene, camera, renderer, player;
         const TILE_WIDTH = 5;
-        const TILE_DEPTH = 30;
+        const TILE_DEPTH = 30; // How long each tunnel segment is
         const TILE_HEIGHT = 0.5;
-        const LANE_WIDTH = 5;
+        const LANE_WIDTH = 5; // How far apart the lanes are
         const LANE_POSITIONS = [-LANE_WIDTH, 0, LANE_WIDTH]; // Left (FAKE), Center, Right (REAL)
         const LANE_MAP = { 0: 'FAKE', 2: 'REAL' };
 
-        let tiles = [];
+        let tiles = []; // Array to hold all the tunnel segments
         let score = 0;
         let isGameOver = false;
         let currentLane = 1; // Start in the middle lane (index 1)
-        let playerSpeed = 0.5;
-        let headlineQueue = [];
-        let nextHeadlineTileZ = -TILE_DEPTH * 3; // Start generating headlines a bit away
+        let playerSpeed = 0.4; // Initial speed
+        let headlineQueue = []; // Holds upcoming headlines
+        let nextHeadlineTileZ = -TILE_DEPTH * 3; // Z-position to spawn the next headline
 
         const HEADLINE_ADVANCE_DISTANCE = TILE_DEPTH * 4; // Generate a new headline every 4 tiles
         const TILE_COUNT = 15; // Number of tiles to keep in the scene
 
-        // DOM elements
+        // --- DOM Elements ---
         const overlay = document.getElementById('overlay');
         const messageBox = document.getElementById('message-box');
         const startButton = document.getElementById('start-button');
@@ -171,23 +215,25 @@ const HEADLINES = [
         const finalScoreDisplay = document.getElementById('final-score');
         const highScoreDisplay = document.getElementById('high-score-display');
 
-        // Game State
-        let currentHeadline = null;
+        // --- Game State ---
+        let currentHeadline = null; // The headline currently being shown
         let isGameRunning = false;
-        let isMoving = false; // Player movement flag
-        let targetX = 0; // Player target X position
+        let isMoving = false; // Flag to prevent multiple moves at once
+        let targetX = 0; // Player's target X position
         let moveStartTime = 0;
-        const moveDuration = 0.15; // seconds
+        const moveDuration = 0.15; // How long (in seconds) it takes to switch lanes
 
-        // High Score Management
+        // --- High Score Management (using localStorage) ---
         const HIGH_SCORE_KEY = 'headlineRunnerHighScore';
 
         function getHighScore() {
+            // Get high score from browser's local storage, default to 0
             return parseInt(localStorage.getItem(HIGH_SCORE_KEY) || '0', 10);
         }
 
         function setHighScore(newScore) {
-            if (newScore > getHighScore()) {
+            const oldHighScore = getHighScore();
+            if (newScore > oldHighScore) {
                 localStorage.setItem(HIGH_SCORE_KEY, newScore.toString());
                 highScoreDisplay.textContent = `High Score: ${newScore}`;
             }
@@ -195,30 +241,35 @@ const HEADLINES = [
 
         // --- 3. CORE GAME FUNCTIONS ---
 
+        /**
+         * Initializes the 3D scene, camera, renderer, and player.
+         */
         function init() {
             // Scene
             scene = new THREE.Scene();
-            scene.fog = new THREE.Fog(0x0d0d1e, 1, TILE_DEPTH * TILE_COUNT * 0.5);
+            // Fog makes distant objects fade into the background color
+            scene.fog = new THREE.Fog(0x0d0d1e, 1, TILE_DEPTH * TILE_COUNT * 0.4);
 
-            // Camera
+            // Camera (Player's viewpoint)
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 5, 10);
+            camera.position.set(0, 5, 10); // Positioned above and behind the player
             camera.rotation.x = -Math.PI / 8; // Look slightly down
 
-            // Renderer
+            // Renderer (Draws the scene)
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.body.appendChild(renderer.domElement);
 
             // Lighting
-            const ambient = new THREE.AmbientLight(0x404040, 2);
+            const ambient = new THREE.AmbientLight(0x404040, 2); // General light
             scene.add(ambient);
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1); // Sun-like light
             directionalLight.position.set(0, 10, 5);
             scene.add(directionalLight);
 
             // Player (simple cylinder for visibility)
             const playerGeometry = new THREE.CylinderGeometry(0.7, 0.7, 2, 32);
+            // Phong material is shiny
             const playerMaterial = new THREE.MeshPhongMaterial({ color: 0x00ffff, shininess: 100 });
             player = new THREE.Mesh(playerGeometry, playerMaterial);
             player.position.set(LANE_POSITIONS[currentLane], 1.5, 0); // Start at Z=0
@@ -227,7 +278,7 @@ const HEADLINES = [
             // Load high score
             highScoreDisplay.textContent = `High Score: ${getHighScore()}`;
 
-            // Initialize tiles
+            // Initialize the tunnel
             for (let i = 0; i < TILE_COUNT; i++) {
                 addTile(i * -TILE_DEPTH);
             }
@@ -236,26 +287,37 @@ const HEADLINES = [
             window.addEventListener('resize', onWindowResize);
             document.addEventListener('keydown', onKeyDown);
             startButton.addEventListener('click', startGame);
+            
+            // Set initial overlay state
+            overlay.style.display = 'flex';
+            statusMessage.textContent = "Press Start to begin. Choose Real or Fake to survive!";
+            headlineDisplay.textContent = "Welcome to the Runner!";
 
             // Start render loop
             animate();
         }
 
+        /**
+         * Resizes the 3D canvas when the browser window changes.
+         */
         function onWindowResize() {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         }
 
+        /**
+         * Resets all game variables and starts the game.
+         */
         function startGame() {
             // Reset state
             isGameOver = false;
             isGameRunning = true;
             score = 0;
-            currentLane = 1;
+            currentLane = 1; // Back to middle
             player.position.x = LANE_POSITIONS[currentLane];
             player.position.z = 0;
-            playerSpeed = 0.5;
+            playerSpeed = 0.4; // Reset speed
             nextHeadlineTileZ = -TILE_DEPTH * 3;
             headlineQueue = [];
             currentHeadline = null;
@@ -268,77 +330,90 @@ const HEADLINES = [
             }
 
             // UI updates
-            overlay.style.display = 'none';
+            overlay.style.display = 'none'; // Hide menu
             scoreDisplay.textContent = `Score: ${score}`;
+            scoreDisplay.style.opacity = 1; // Show scores
+            highScoreDisplay.style.opacity = 1;
             finalScoreDisplay.style.display = 'none';
         }
 
+        /**
+         * Stops the game and shows the Game Over screen.
+         */
         function gameOver() {
-            if (isGameOver) return;
+            if (isGameOver) return; // Prevent multiple calls
             isGameOver = true;
             isGameRunning = false;
-            setHighScore(score);
+            setHighScore(score); // Save high score if new
 
             // Show Game Over UI
             overlay.style.display = 'flex';
-            statusMessage.textContent = "Game Over! You hit a fake or real wall.";
+            statusMessage.textContent = "The truth got you! Or maybe the lie did...";
             headlineDisplay.textContent = "GAME OVER";
             finalScoreDisplay.textContent = `Final Score: ${score}`;
             finalScoreDisplay.style.display = 'block';
             startButton.textContent = "Play Again";
+            
+            // Hide in-game score
+            scoreDisplay.style.opacity = 0;
+            highScoreDisplay.style.opacity = 0;
         }
 
         // --- 4. WORLD GENERATION ---
 
+        /**
+         * Creates a new tunnel segment (tile) and adds it to the scene.
+         */
         function addTile(z) {
             const tileGroup = new THREE.Group();
 
             // 1. Floor Geometry (3 lanes)
             const floorGeometry = new THREE.BoxGeometry(TILE_WIDTH * 3 + 0.5, TILE_HEIGHT, TILE_DEPTH);
-            const floorMaterial = new THREE.MeshStandardMaterial({ color: 0x1a1a40 });
+            const floorMaterial = new THREE.MeshStandardMaterial({ color: 0x1a1a40 }); // Dark blue floor
             const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-            floor.position.set(0, -TILE_HEIGHT / 2, z);
+            floor.position.set(0, -TILE_HEIGHT / 2, 0); // Centered at 0,0
             tileGroup.add(floor);
 
             // 2. Neon Lane Dividers (Yellow)
             for (let i = 0; i < 2; i++) {
                 const dividerGeometry = new THREE.BoxGeometry(0.1, TILE_HEIGHT, TILE_DEPTH);
-                const dividerMaterial = new THREE.MeshBasicMaterial({ color: 0xffcc00 });
+                const dividerMaterial = new THREE.MeshBasicMaterial({ color: 0xffcc00 }); // Bright yellow
                 const divider = new THREE.Mesh(dividerGeometry, dividerMaterial);
-                divider.position.set(LANE_POSITIONS[i] + LANE_WIDTH / 2, 0, z);
+                divider.position.set(LANE_POSITIONS[i] + LANE_WIDTH / 2, 0, 0);
                 tileGroup.add(divider);
             }
 
-            // 3. Walls (Simple cylinder walls)
+            // 3. Walls
             const wallHeight = 10;
-            const wallMaterial = new THREE.MeshBasicMaterial({ color: 0x2e2e5c });
+            const wallMaterial = new THREE.MeshBasicMaterial({ color: 0x2e2e5c }); // Dark purple-blue
 
-            // Left Wall
             const leftWallGeometry = new THREE.BoxGeometry(0.5, wallHeight, TILE_DEPTH);
             const leftWall = new THREE.Mesh(leftWallGeometry, wallMaterial);
-            leftWall.position.set(-(TILE_WIDTH * 1.5 + 0.25), wallHeight / 2, z);
+            leftWall.position.set(-(TILE_WIDTH * 1.5 + 0.25), wallHeight / 2, 0);
             tileGroup.add(leftWall);
 
-            // Right Wall
             const rightWallGeometry = new THREE.BoxGeometry(0.5, wallHeight, TILE_DEPTH);
             const rightWall = new THREE.Mesh(rightWallGeometry, wallMaterial);
-            rightWall.position.set((TILE_WIDTH * 1.5 + 0.25), wallHeight / 2, z);
+            rightWall.position.set((TILE_WIDTH * 1.5 + 0.25), wallHeight / 2, 0);
             tileGroup.add(rightWall);
 
             // 4. Headline Obstacle Generation
             if (z <= nextHeadlineTileZ) {
-                spawnHeadlineObstacle(tileGroup, z);
+                spawnHeadlineObstacle(tileGroup); // Add obstacles to this tile
                 // Set next spawn point further away
                 nextHeadlineTileZ = z - HEADLINE_ADVANCE_DISTANCE;
             }
 
             // Add tile to scene and array
-            tileGroup.position.z = z;
+            tileGroup.position.z = z; // Set the tile's Z position
             scene.add(tileGroup);
             tiles.push(tileGroup);
         }
 
-        function spawnHeadlineObstacle(tileGroup, z) {
+        /**
+         * Spawns the "Real" and "Fake" gates on a given tile.
+         */
+        function spawnHeadlineObstacle(tileGroup) {
             // Get a random unique headline
             let availableHeadlines = HEADLINES.filter(h => !headlineQueue.some(q => q.headline.headline === h.headline));
             if (availableHeadlines.length === 0) {
@@ -351,42 +426,68 @@ const HEADLINES = [
 
             // Determine which lane is correct (0=FAKE, 2=REAL)
             const correctLaneIndex = headlineData.isReal ? 2 : 0;
-            const correctX = LANE_POSITIONS[correctLaneIndex];
+            const obstacleZ = -TILE_DEPTH / 2 + 5; // Place it near the start of the tile
 
-            // Create the obstacle (a large, invisible wall)
-            const obstacleGeometry = new THREE.BoxGeometry(TILE_WIDTH * 3, TILE_HEIGHT * 10, 0.5); // Thin barrier
-            const obstacleMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 0 }); // Invisible
-            const obstacle = new THREE.Mesh(obstacleGeometry, obstacleMaterial);
-            obstacle.position.set(0, 0, z + TILE_DEPTH / 2 - 5); // Place it slightly before the end of the tile
-            obstacle.userData = { isObstacle: true, isReal: headlineData.isReal, passed: false };
+            // Create the invisible "trigger" wall
+            const triggerGeometry = new THREE.BoxGeometry(TILE_WIDTH * 3, TILE_HEIGHT * 10, 0.5); 
+            const triggerMaterial = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 }); // Invisible
+            const trigger = new THREE.Mesh(triggerGeometry, triggerMaterial);
+            trigger.position.set(0, 0, obstacleZ);
+            // Store data on the object for collision checking
+            trigger.userData = { 
+                isTrigger: true, 
+                correctLaneIndex: correctLaneIndex,
+                headline: headlineData 
+            };
+            tileGroup.add(trigger);
 
-            tileGroup.add(obstacle);
+            // Create the VISUAL gates
+            const gateHeight = 4;
+            const gateGeometry = new THREE.BoxGeometry(LANE_WIDTH - 0.5, gateHeight, 0.5);
+            
+            // FAKE Gate (Left Lane)
+            const fakeGateMaterial = new THREE.MeshBasicMaterial({ color: 0xff3300 }); // Red
+            const fakeGate = new THREE.Mesh(gateGeometry, fakeGateMaterial);
+            fakeGate.position.set(LANE_POSITIONS[0], gateHeight / 2, obstacleZ);
+            tileGroup.add(fakeGate);
 
-            // Create a "GAP" over the correct lane
-            // Block off the INCORRECT lane to force the player into the correct one.
-            const incorrectLaneIndex = headlineData.isReal ? 0 : 2;
+            // REAL Gate (Right Lane)
+            const realGateMaterial = new THREE.MeshBasicMaterial({ color: 0x33ff00 }); // Green
+            const realGate = new THREE.Mesh(gateGeometry, realGateMaterial);
+            realGate.position.set(LANE_POSITIONS[2], gateHeight / 2, obstacleZ);
+            tileGroup.add(realGate);
+            
+            // Block off the INCORRECT lane
+            const incorrectLaneIndex = headlineData.isReal ? 0 : 2; // 0=FAKE, 2=REAL
             const incorrectX = LANE_POSITIONS[incorrectLaneIndex];
-            const incorrectLaneBlockerGeometry = new THREE.BoxGeometry(LANE_WIDTH - 0.5, 3, 0.5);
-            const incorrectLaneBlockerMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-            const incorrectLaneBlocker = new THREE.Mesh(incorrectLaneBlockerGeometry, incorrectLaneBlockerMaterial);
-            incorrectLaneBlocker.position.set(incorrectX, 1.5, obstacle.position.z);
-            tileGroup.add(incorrectLaneBlocker);
+            const blockerMaterial = headlineData.isReal ? fakeGateMaterial : realGateMaterial; // Use same color as gate
+            
+            const blocker = new THREE.Mesh(gateGeometry, blockerMaterial);
+            blocker.position.set(incorrectX, gateHeight / 2, obstacleZ);
+            
+            // We'll just re-use the gate mesh as the blocker, but if we wanted a
+            // different appearance, we'd make a new one.
 
             // Store the data for player checks
             headlineQueue.push({
                 headline: headlineData,
                 tile: tileGroup,
-                obstacle: obstacle,
+                trigger: trigger,
                 correctLaneIndex: correctLaneIndex,
-                passed: false
+                passed: false // Flag to show we've processed this
             });
         }
 
 
         // --- 5. GAME LOOP AND UPDATES ---
 
+        /**
+         * The main game loop, called every frame.
+         */
         function animate(time) {
-            requestAnimationFrame(animate);
+            requestAnimationFrame(animate); // Loop forever
+            
+            const timeSeconds = time / 1000; // Convert time to seconds
 
             if (isGameRunning) {
                 const deltaZ = playerSpeed;
@@ -397,96 +498,112 @@ const HEADLINES = [
 
                     // Check if tile is behind the camera (needs recycling)
                     if (tile.position.z > camera.position.z) {
+                        // Remove tile from scene and array
                         scene.remove(tile);
-                        tiles.shift(); // Remove from front
-                        addTile(tiles[tiles.length - 1].position.z - TILE_DEPTH); // Add to back
-                        playerSpeed += 0.005; // Increase speed over time
+                        tiles.shift(); // Remove from front of array
+                        // Add a new tile at the far end
+                        addTile(tiles[tiles.length - 1].position.z - TILE_DEPTH); 
+                        playerSpeed += 0.002; // Increase speed slightly
                     }
                 });
 
-                // 2. Player Movement Update (Lerp)
+                // 2. Player Movement Update (Smoothly lerp to target lane)
                 if (isMoving) {
-                    const elapsed = (time / 1000) - moveStartTime;
-                    const t = Math.min(1, elapsed / moveDuration);
+                    const elapsed = timeSeconds - moveStartTime;
+                    const t = Math.min(1, elapsed / moveDuration); // % of move completed (0 to 1)
+                    // Lerp = Linear Interpolation
                     player.position.x = THREE.MathUtils.lerp(player.position.x, targetX, t);
-                    if (t === 1) {
+                    
+                    if (t === 1) { // Move finished
                         isMoving = false;
                         player.position.x = targetX;
                     }
                 }
 
-                // 3. Collision and Scoring Check (Check headlines)
-                checkHeadlineCollision(time);
+                // 3. Collision and Scoring Check
+                checkHeadlineCollision();
             }
 
+            // Render the 3D scene
             renderer.render(scene, camera);
         }
 
-        function checkHeadlineCollision(time) {
-            // Filter out headlines that have already been passed
-            headlineQueue = headlineQueue.filter(h => h.tile.position.z < camera.position.z);
-
-            // Check current headline (the one closest to the player)
-            if (headlineQueue.length > 0) {
-                const h = headlineQueue[0];
-
-                // a) Display headline
-                if (currentHeadline !== h) {
-                    currentHeadline = h;
-                    headlineDisplay.textContent = h.headline.headline;
-                    statusMessage.textContent = h.headline.isReal ? "Is this REAL?" : "Is this FAKE?";
-                    // Briefly show the message box for context
-                    messageBox.style.opacity = 1;
-                    messageBox.style.transition = 'opacity 0.2s';
+        /**
+         * Checks if the player is passing through a headline gate.
+         */
+        function checkHeadlineCollision() {
+            // Get the next headline in the queue
+            const nextHeadline = headlineQueue[0];
+            
+            if (!nextHeadline || nextHeadline.passed) {
+                // If no headline or already passed, clear UI
+                if (messageBox.style.opacity !== "0") {
+                     headlineDisplay.textContent = "";
+                     statusMessage.textContent = "";
+                     messageBox.style.opacity = 0;
                 }
+                return;
+            }
 
-                // b) Check for passing point (when player reaches the obstacle Z position)
-                const obstacleZ = h.tile.position.z + h.obstacle.position.z;
+            // Calculate the trigger's absolute Z position
+            const triggerZ = nextHeadline.tile.position.z + nextHeadline.trigger.position.z;
 
-                if (obstacleZ > player.position.z && obstacleZ < player.position.z + deltaZ + 0.1) {
-                    // Check if player is in the correct lane
-                    const isCorrect = currentLane === h.correctLaneIndex;
-
-                    if (isCorrect) {
-                        score++;
-                        scoreDisplay.textContent = `Score: ${score}`;
-                        // Clear headline display
-                        headlineDisplay.textContent = "";
-                        statusMessage.textContent = "";
-                        messageBox.style.opacity = 0;
-                        h.passed = true;
-                    } else {
-                        // Game Over: Incorrect lane selected
-                        gameOver();
-                    }
-                } else if (obstacleZ > player.position.z + 5 && !h.passed) {
-                    // This means the player failed to make a choice in time or missed the gate
-                    // This is an implicit game over logic for missing the timing window
-                    if (time % 500 < 250) { // Flashing Red Wall
-                        // Not strictly necessary due to the red barrier, but good for robust logic
-                    }
+            // a) Display headline when player is approaching
+            if (triggerZ > player.position.z && triggerZ < player.position.z + 60) {
+                 if (currentHeadline !== nextHeadline) {
+                    currentHeadline = nextHeadline;
+                    headlineDisplay.textContent = nextHeadline.headline.headline;
+                    statusMessage.textContent = "Make your choice!";
+                    messageBox.style.opacity = 1; // Show the headline box
                 }
-            } else {
-                // If the queue is empty, clear the display
-                headlineDisplay.textContent = "";
-                statusMessage.textContent = "";
-                messageBox.style.opacity = 0;
+            }
+            
+            // b) Check for passing point (when player crosses the trigger's Z)
+            // We check a small window around the player's Z position
+            if (triggerZ > player.position.z - (playerSpeed / 2) && 
+                triggerZ < player.position.z + (playerSpeed / 2)) 
+            {
+                // Player is crossing the gate *right now*
+                
+                // Check if player is in the correct lane (0=FAKE, 2=REAL)
+                // We use Math.round to account for any lerp imprecision
+                const playerLane = LANE_POSITIONS.indexOf(Math.round(player.position.x));
+                const isCorrect = playerLane === nextHeadline.correctLaneIndex;
+
+                if (isCorrect) {
+                    score++;
+                    scoreDisplay.textContent = `Score: ${score}`;
+                } else {
+                    // Game Over: Incorrect lane selected
+                    gameOver();
+                }
+                
+                // Mark as passed so we don't check it again
+                nextHeadline.passed = true;
+                headlineQueue.shift(); // Remove from queue
+                currentHeadline = null; // Clear current headline
             }
         }
 
         // --- 6. INPUT HANDLER ---
 
+        /**
+         * Handles keyboard input for moving left and right.
+         */
         function onKeyDown(event) {
-            if (!isGameRunning || isMoving) return;
+            if (!isGameRunning || isMoving) return; // Don't move if game isn't running or already moving
 
             let newLane = currentLane;
             let moved = false;
 
             if (event.key === 'ArrowLeft') {
-                newLane = Math.max(0, currentLane - 1); // Move left (towards FAKE lane: 0)
+                newLane = 0; // Go to FAKE lane
                 moved = newLane !== currentLane;
             } else if (event.key === 'ArrowRight') {
-                newLane = Math.min(2, currentLane + 1); // Move right (towards REAL lane: 2)
+                newLane = 2; // Go to REAL lane
+                moved = newLane !== currentLane;
+            } else if (event.key === 'ArrowDown') {
+                newLane = 1; // Go to CENTER lane (safe zone)
                 moved = newLane !== currentLane;
             }
 
@@ -494,20 +611,15 @@ const HEADLINES = [
                 currentLane = newLane;
                 targetX = LANE_POSITIONS[currentLane];
                 isMoving = true;
-                moveStartTime = performance.now() / 1000;
+                moveStartTime = performance.now() / 1000; // Start move timer
             }
         }
 
 
         // --- START APPLICATION ---
-        window.onload = function () {
-            init();
-
-            // Set initial overlay state
-            overlay.style.display = 'flex';
-            statusMessage.textContent = "Press Start to begin. Choose Real or Fake to survive!";
-            headlineDisplay.textContent = "Welcome to the Runner!";
-        };
+        // We call init() once the window is fully loaded.
+        window.onload = init;
     </script>
 </body>
 </html>
+
