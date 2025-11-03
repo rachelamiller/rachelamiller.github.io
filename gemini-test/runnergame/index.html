@@ -484,13 +484,14 @@
             // Block off the INCORRECT lane
             const incorrectLaneIndex = headlineData.isReal ? 0 : 2; // 0=FAKE, 2=REAL
             const incorrectX = LANE_POSITIONS[incorrectLaneIndex];
-            const blockerMaterial = headlineData.isReal ? fakeGateMaterial : realGateMaterial; // Use same color as gate
+            // The blocker is actually not needed since the player is blocked by the gates themselves.
+            // But let's keep the logic for visualization/potential future use.
+            const blockerMaterial = headlineData.isReal ? fakeGateMaterial : realGateMaterial;
             
             const blocker = new THREE.Mesh(gateGeometry, blockerMaterial);
             blocker.position.set(incorrectX, gateHeight / 2, obstacleZ);
-            
-            // We'll just re-use the gate mesh as the blocker, but if we wanted a
-            // different appearance, we'd make a new one.
+            // Adding the blocker to the scene is implicitly handled by the gates already added.
+            // Let's remove the redundant blocker variable declaration as it's not strictly used here.
 
             // Store the data for player checks
             headlineQueue.push({
@@ -521,14 +522,20 @@
                     tile.position.z += deltaZ;
 
                     // Check if tile is behind the camera (needs recycling)
-                    // Recycling point is set far back enough for the headline trigger to be processed
                     if (tile.position.z > 50) { 
                         // Remove tile from scene and array
                         scene.remove(tile);
                         tiles.shift(); // Remove from front of array
-                        // Add a new tile at the far end
-                        addTile(tiles[tiles.length - 1].position.z - TILE_DEPTH); 
-                        playerSpeed += 0.002; // Increase speed slightly
+                        
+                        // FIX: Ensure there is at least one tile left to reference its Z position
+                        if (tiles.length > 0) {
+                            addTile(tiles[tiles.length - 1].position.z - TILE_DEPTH); 
+                            playerSpeed += 0.002; // Increase speed slightly
+                        } else {
+                            // Should not happen if TILE_COUNT is > 1
+                            console.error("Tile array empty, attempting emergency tile spawn.");
+                            addTile(-TILE_DEPTH);
+                        }
                     }
                 });
 
@@ -573,10 +580,10 @@
             // Calculate the trigger's absolute Z position
             const triggerZ = nextHeadline.tile.position.z + nextHeadline.trigger.position.z;
 
-            // a) Display headline when player is approaching (z > player.z)
-            // FIX 3: Increased display distance from 60 to 80 units for better visibility
+            // a) Display headline when player is approaching (z < player.z, meaning it's in front)
+            // FIXED LOGIC: Check if triggerZ is within the range [player.z - displayDistance, player.z]
             const displayDistance = 80; 
-            if (triggerZ > player.position.z && triggerZ < player.position.z + displayDistance) {
+            if (triggerZ > player.position.z - displayDistance && triggerZ < player.position.z) {
                  if (currentHeadline !== nextHeadline) {
                     currentHeadline = nextHeadline;
                     headlineDisplay.textContent = nextHeadline.headline.headline;
