@@ -44,6 +44,16 @@
             pointer-events: auto; /* This box *can* be clicked */
             max-width: 90%;
             transition: opacity 0.3s ease-in-out;
+            /* --- ADDED/MODIFIED RULES --- */
+            position: absolute;   /* Position it independently */
+            top: 20px;            /* Near the top */
+            left: 50%;            /* Centered */
+            transform: translateX(-50%); /* Correctly centered */
+            width: 800px;         /* Give it a consistent width */
+            max-width: 90%;     /* For mobile */
+            opacity: 0;           /* Start invisible */
+            display: none;        /* Start hidden */
+            z-index: 10;          /* Above game, below main menu */
         }
 
         /* --- Text Elements --- */
@@ -142,9 +152,10 @@
 <body>
     <!-- This div holds all the UI text, buttons, and scores -->
     <div id="overlay">
-        <div id="message-box">
+        <!-- The message-box is NO LONGER in here -->
+        <div id="message-box-content" style="text-align: center;"> <!-- Renamed for clarity, or just use overlay's flex -->
             <div class="title">REAL OR FAKE RUNNER</div>
-            <div id="headline-display"></div>
+            <!-- The headline display is MOVED -->
             <div id="status-message" class="subtitle">Press Start to begin.</div>
             <div id="final-score"></div>
             <button id="start-button" class="button">Start Game</button>
@@ -153,6 +164,12 @@
                 Use **Right Arrow (→)** for <span>REAL</span> news.
             </div>
         </div>
+    </div>
+
+    <!-- MOVED THE MESSAGE-BOX HERE (outside the overlay) -->
+    <div id="message-box">
+        <div id="headline-display"></div>
+        <div id="status-message-ingame" class="subtitle" style="margin-bottom: 0;"></div>
     </div>
     
     <!-- These are separate for in-game display -->
@@ -210,7 +227,8 @@
         const messageBox = document.getElementById('message-box');
         const startButton = document.getElementById('start-button');
         const headlineDisplay = document.getElementById('headline-display');
-        const statusMessage = document.getElementById('status-message');
+        const statusMessage = document.getElementById('status-message'); // This is the menu one
+        const statusMessageIngame = document.getElementById('status-message-ingame'); // This is the new in-game one
         const scoreDisplay = document.getElementById('score-display');
         const finalScoreDisplay = document.getElementById('final-score');
         const highScoreDisplay = document.getElementById('high-score-display');
@@ -290,8 +308,9 @@
             
             // Set initial overlay state
             overlay.style.display = 'flex';
+            messageBox.style.display = 'none'; // Make sure message box is hidden
             statusMessage.textContent = "Press Start to begin. Choose Real or Fake to survive!";
-            headlineDisplay.textContent = "Welcome to the Runner!";
+            // headlineDisplay.textContent = "Welcome to the Runner!"; // This is inside messageBox, so it's hidden
 
             // Start render loop
             animate();
@@ -331,6 +350,8 @@
 
             // UI updates
             overlay.style.display = 'none'; // Hide menu
+            messageBox.style.display = 'block'; // Show the (empty) message box
+            messageBox.style.opacity = 0; // Start it invisible
             scoreDisplay.textContent = `Score: ${score}`;
             scoreDisplay.style.opacity = 1; // Show scores
             highScoreDisplay.style.opacity = 1;
@@ -348,8 +369,9 @@
 
             // Show Game Over UI
             overlay.style.display = 'flex';
+            messageBox.style.display = 'none'; // Hide the in-game headline box
             statusMessage.textContent = "The truth got you! Or maybe the lie did...";
-            headlineDisplay.textContent = "GAME OVER";
+            headlineDisplay.textContent = ""; // Clear headline text
             finalScoreDisplay.textContent = `Final Score: ${score}`;
             finalScoreDisplay.style.display = 'block';
             startButton.textContent = "Play Again";
@@ -539,7 +561,7 @@
                 // If no headline or already passed, clear UI
                 if (messageBox.style.opacity !== "0") {
                      headlineDisplay.textContent = "";
-                     statusMessage.textContent = "";
+                     statusMessageIngame.textContent = ""; // Use in-game status
                      messageBox.style.opacity = 0;
                 }
                 return;
@@ -553,7 +575,7 @@
                  if (currentHeadline !== nextHeadline) {
                     currentHeadline = nextHeadline;
                     headlineDisplay.textContent = nextHeadline.headline.headline;
-                    statusMessage.textContent = "Make your choice!";
+                    statusMessageIngame.textContent = "Make your choice!"; // Use in-game status
                     messageBox.style.opacity = 1; // Show the headline box
                 }
             }
@@ -622,4 +644,5 @@
     </script>
 </body>
 </html>
+
 
