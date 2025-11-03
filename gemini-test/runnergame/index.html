@@ -176,8 +176,9 @@
 
     <script>
         // --- 1. HEADLINES DATA ---
-        // This is the data from the JSON file, embedded directly into the script.
+        // Expanded the headline pool significantly to prevent repetition and increase game length.
         const HEADLINES = [
+          // Original Headlines (20)
           { "headline": "A Town in Italy Has Outlawed the Wearing of Flip-Flops.", "isReal": true },
           { "headline": "Scientists Are Training Dogs to Sniff Out Computer Hard Drives.", "isReal": true },
           { "headline": "Finland's Air Force Removed a Swastika from Its Official Emblem.", "isReal": true },
@@ -197,7 +198,51 @@
           { "headline": "Germany Passes a Law Requiring All New Homes to Be Built with Rooftop Gardens.", "isReal": false },
           { "headline": "Google AI Accidentally Creates a New, More Efficient Type of Concrete.", "isReal": false },
           { "headline": "A New York City Restaurant Is Charging $50 to Keep Your Phone Off the Table.", "isReal": false },
-          { "headline": "Scientists Discover a New Mineral That Generates Electricity When Exposed to Jazz Music.", "isReal": false }
+          { "headline": "Scientists Discover a New Mineral That Generates Electricity When Exposed to Jazz Music.", "isReal": false },
+
+          // Additional Real Headlines (20)
+          { "headline": "A French town successfully trained eagles to intercept and destroy unauthorized drones.", "isReal": true },
+          { "headline": "Cows in Germany were fitted with VR headsets to make them think they are in a summer meadow.", "isReal": true },
+          { "headline": "Archaeologists discovered a fully preserved, 2000-year-old Roman fast-food stall in Pompeii.", "isReal": true },
+          { "headline": "The United Nations officially recognized pizza as a cultural heritage item.", "isReal": true },
+          { "headline": "Researchers invented a new type of transparent wood that could replace glass.", "isReal": true },
+          { "headline": "The world's longest traffic jam lasted 10 days and spanned over 60 miles in China.", "isReal": true },
+          { "headline": "A woman survived 14 days in the Australian wilderness by eating only ants and plants.", "isReal": true },
+          { "headline": "Scientists successfully taught spineless sea slugs how to swim using only light.", "isReal": true },
+          { "headline": "Japan built a giant vacuum cleaner to clear space debris orbiting Earth.", "isReal": true },
+          { "headline": "A library in Finland sends out books by drone to remote island residents.", "isReal": true },
+          { "headline": "Iceland officially bans the use of the name \"Kylie\" because it's not a traditional name.", "isReal": true },
+          { "headline": "A hotel in the Maldives features a fully submerged underwater bedroom.", "isReal": true },
+          { "headline": "Scientists discovered a new species of insect that pollinates underwater.", "isReal": true },
+          { "headline": "A man in the UK legally changed his name to \"Captain Fantastic Faster Than Superman Spiderman Batman Wolverine Hulk and The Flash Combined.\"", "isReal": true },
+          { "headline": "South Korea announced plans to build an enormous floating city by 2030.", "isReal": true },
+          { "headline": "A team of engineers designed a backpack that converts heat from walking into electricity.", "isReal": true },
+          { "headline": "A rare blue lobster was found by a fisherman off the coast of Maine.", "isReal": true },
+          { "headline": "The official language of Paraguay is both Spanish and Guarani.", "isReal": true },
+          { "headline": "A space agency is growing tomatoes using conditions similar to those on Mars.", "isReal": true },
+          { "headline": "The sound of crickets chirping can be used to estimate the temperature.", "isReal": true },
+
+          // Additional Fake Headlines (20)
+          { "headline": "Due to safety concerns, all circular kitchen tables are being recalled worldwide.", "isReal": false },
+          { "headline": "NASA confirmed that the moon is slowly turning green due to accumulated space moss.", "isReal": false },
+          { "headline": "New evidence suggests historical Vikings actually used rubber ducks as navigation tools.", "isReal": false },
+          { "headline": "The Pope announced that all Catholic churches must switch to solar-powered stained glass windows.", "isReal": false },
+          { "headline": "Researchers developed a sugar substitute that makes desserts taste like fresh pavement.", "isReal": false },
+          { "headline": "World leaders passed a treaty requiring everyone to wear socks on their hands while sleeping.", "isReal": false },
+          { "headline": "A popular coffee chain begins offering coffee beans grown exclusively in Antarctica's sub-zero caves.", "isReal": false },
+          { "headline": "Archaeologists found a giant, perfectly preserved chocolate bar from the 18th century.", "isReal": false },
+          { "headline": "California mandates that all household pets must have individual Instagram accounts with daily posts.", "isReal": false },
+          { "headline": "A study found that the average human sheds exactly 15 pounds of skin per year in their sleep.", "isReal": false },
+          { "headline": "Scientists claim they have invented a pill that allows humans to communicate directly with earthworms.", "isReal": false },
+          { "headline": "Japan introduced a 100-story, fully automated vending machine that dispenses cars.", "isReal": false },
+          { "headline": "A major tech company replaced its entire customer service department with a single philosophical octopus.", "isReal": false },
+          { "headline": "It is now illegal to wear stripes and polka dots at the same time in three U.S. states.", "isReal": false },
+          { "headline": "A new species of jellyfish was discovered that can perfectly mimic the sound of a doorbell.", "isReal": false },
+          { "headline": "Researchers developed a special paint that allows walls to listen to and correct grammatical errors in conversations.", "isReal": false },
+          { "headline": "A popular soft drink company announced a limited-edition flavor based on the scent of fresh printer ink.", "isReal": false },
+          { "headline": "The world's largest rubber band ball spontaneously combusted during a charity event.", "isReal": false },
+          { "headline": "All professional athletes must now compete while balancing a fruit basket on their head.", "isReal": false },
+          { "headline": "The world's smallest piano can only be played by micro-organisms, scientists confirm.", "isReal": false }
         ];
 
         // --- 2. THREE.JS SCENE SETUP ---
@@ -484,8 +529,9 @@
         function spawnHeadlineObstacle(tileGroup) {
             // Get a random unique headline
             let availableHeadlines = HEADLINES.filter(h => !headlineQueue.some(q => q.headline.headline === h.headline));
+            
+            // If all headlines were used, reset pool by setting availableHeadlines to all HEADLINES
             if (availableHeadlines.length === 0) {
-                // If all headlines were used, reset pool
                 availableHeadlines = HEADLINES.slice();
             }
 
@@ -559,13 +605,12 @@
                         scene.remove(tile);
                         tiles.shift(); // Remove from front of array
                         
-                        // FIX: Ensure there is at least one tile left to reference its Z position
+                        // Ensure there is at least one tile left to reference its Z position
                         if (tiles.length > 0) {
                             addTile(tiles[tiles.length - 1].position.z - TILE_DEPTH); 
                             playerSpeed += 0.002; // Increase speed slightly
                         } else {
-                            // Should not happen if TILE_COUNT is > 1
-                            console.error("Tile array empty, attempting emergency tile spawn.");
+                            // Emergency spawn if array is empty (shouldn't happen)
                             addTile(-TILE_DEPTH);
                         }
                     }
@@ -612,8 +657,7 @@
             // Calculate the trigger's absolute Z position
             const triggerZ = nextHeadline.tile.position.z + nextHeadline.trigger.position.z;
 
-            // a) Display headline when player is approaching
-            // FIXED LOGIC: Check if triggerZ is between -displayDistance (far away) and 0 (player position)
+            // a) Display headline when player is approaching (trigger Z is between -80 and 0)
             const displayDistance = 80; 
             if (triggerZ > player.position.z - displayDistance && triggerZ < player.position.z) {
                  if (currentHeadline !== nextHeadline) {
