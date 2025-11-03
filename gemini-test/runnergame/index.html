@@ -215,7 +215,10 @@
         let currentLane = 1; // Start in the middle lane (index 1)
         let playerSpeed = 0.4; // Initial speed
         let headlineQueue = []; // Holds upcoming headlines
-        let nextHeadlineTileZ = -TILE_DEPTH * 3; // Z-position to spawn the next headline
+        
+        // FIX 1: Change initial spawn point Z from -TILE_DEPTH * 3 (-90) to -TILE_DEPTH (-30).
+        // This makes the first headline gate (trigger Z = -40) appear much sooner.
+        let nextHeadlineTileZ = -TILE_DEPTH; // Z-position to spawn the next headline
 
         const HEADLINE_ADVANCE_DISTANCE = TILE_DEPTH * 4; // Generate a new headline every 4 tiles
         const TILE_COUNT = 15; // Number of tiles to keep in the scene
@@ -335,7 +338,8 @@
             player.position.x = LANE_POSITIONS[currentLane];
             player.position.z = 0;
             playerSpeed = 0.4; // Reset speed
-            nextHeadlineTileZ = -TILE_DEPTH * 3;
+            // FIX 2: Ensure this is reset to the new, closer initial position on game start.
+            nextHeadlineTileZ = -TILE_DEPTH;
             headlineQueue = [];
             currentHeadline = null;
 
@@ -517,8 +521,7 @@
                     tile.position.z += deltaZ;
 
                     // Check if tile is behind the camera (needs recycling)
-                    // FIX: Increased recycling point from 20 to 50 to ensure the headline object 
-                    // stays in the scene long enough for the display logic to trigger reliably.
+                    // Recycling point is set far back enough for the headline trigger to be processed
                     if (tile.position.z > 50) { 
                         // Remove tile from scene and array
                         scene.remove(tile);
@@ -571,8 +574,9 @@
             const triggerZ = nextHeadline.tile.position.z + nextHeadline.trigger.position.z;
 
             // a) Display headline when player is approaching (z > player.z)
-            // Show headline when it's between 60 units and the player
-            if (triggerZ > player.position.z && triggerZ < player.position.z + 60) {
+            // FIX 3: Increased display distance from 60 to 80 units for better visibility
+            const displayDistance = 80; 
+            if (triggerZ > player.position.z && triggerZ < player.position.z + displayDistance) {
                  if (currentHeadline !== nextHeadline) {
                     currentHeadline = nextHeadline;
                     headlineDisplay.textContent = nextHeadline.headline.headline;
