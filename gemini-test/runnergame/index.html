@@ -160,6 +160,8 @@
             <div class="instructions">
                 Use **Left Arrow (←)** for <span>FAKE</span> news.<br>
                 Use **Right Arrow (→)** for <span>REAL</span> news.
+                <br>
+                Use **Down Arrow (↓)** for the <span>CENTER LANE</span> (safe zone).
             </div>
         </div>
     </div>
@@ -176,9 +178,8 @@
 
     <script>
         // --- 1. HEADLINES DATA ---
-        // Expanded the headline pool significantly to prevent repetition and increase game length.
+        // A large pool of 60 headlines (30 Real, 30 Fake) to ensure long gameplay without repetition.
         const HEADLINES = [
-          // Original Headlines (20)
           { "headline": "A Town in Italy Has Outlawed the Wearing of Flip-Flops.", "isReal": true },
           { "headline": "Scientists Are Training Dogs to Sniff Out Computer Hard Drives.", "isReal": true },
           { "headline": "Finland's Air Force Removed a Swastika from Its Official Emblem.", "isReal": true },
@@ -189,18 +190,6 @@
           { "headline": "Scientists in Russia Claim to Have Discovered the World's Oldest Water.", "isReal": true },
           { "headline": "An Entire City in the Netherlands Is Powered by Cheese Waste.", "isReal": true },
           { "headline": "Norway Once Knighted a King Penguin Named Nils Olav.", "isReal": true },
-          { "headline": "SpaceX Announces Plans to Launch a Luxury Hotel into Earth’s Orbit.", "isReal": false },
-          { "headline": "New App Uses AI to Translate Your Cat's Meows into Sarcastic Human Speech.", "isReal": false },
-          { "headline": "Study Finds That Taking Too Many Selfies Is Linked to a Rare Mental Condition.", "isReal": false },
-          { "headline": "A Town in Wyoming Elected a Goat as Its Honorary Mayor.", "isReal": false },
-          { "headline": "Scientists Have Designed a New Type of \"Forever\" Plastic That Can Dissolve in Water.", "isReal": false },
-          { "headline": "World’s Largest Library Is Now Offering Human Librarians as \"Book Recommendations.\"", "isReal": false },
-          { "headline": "Germany Passes a Law Requiring All New Homes to Be Built with Rooftop Gardens.", "isReal": false },
-          { "headline": "Google AI Accidentally Creates a New, More Efficient Type of Concrete.", "isReal": false },
-          { "headline": "A New York City Restaurant Is Charging $50 to Keep Your Phone Off the Table.", "isReal": false },
-          { "headline": "Scientists Discover a New Mineral That Generates Electricity When Exposed to Jazz Music.", "isReal": false },
-
-          // Additional Real Headlines (20)
           { "headline": "A French town successfully trained eagles to intercept and destroy unauthorized drones.", "isReal": true },
           { "headline": "Cows in Germany were fitted with VR headsets to make them think they are in a summer meadow.", "isReal": true },
           { "headline": "Archaeologists discovered a fully preserved, 2000-year-old Roman fast-food stall in Pompeii.", "isReal": true },
@@ -214,15 +203,24 @@
           { "headline": "Iceland officially bans the use of the name \"Kylie\" because it's not a traditional name.", "isReal": true },
           { "headline": "A hotel in the Maldives features a fully submerged underwater bedroom.", "isReal": true },
           { "headline": "Scientists discovered a new species of insect that pollinates underwater.", "isReal": true },
-          { "headline": "A man in the UK legally changed his name to \"Captain Fantastic Faster Than Superman Spiderman Batman Wolverine Hulk and The Flash Combined.\"", "isReal": true },
+          { "headline": "A man in the UK legally changed his name to \"Captain Fantastic Faster Than Superman Spiderman Batman Wolverine Hulk and The Flash Combined.\".", "isReal": true },
           { "headline": "South Korea announced plans to build an enormous floating city by 2030.", "isReal": true },
           { "headline": "A team of engineers designed a backpack that converts heat from walking into electricity.", "isReal": true },
           { "headline": "A rare blue lobster was found by a fisherman off the coast of Maine.", "isReal": true },
           { "headline": "The official language of Paraguay is both Spanish and Guarani.", "isReal": true },
           { "headline": "A space agency is growing tomatoes using conditions similar to those on Mars.", "isReal": true },
           { "headline": "The sound of crickets chirping can be used to estimate the temperature.", "isReal": true },
-
-          // Additional Fake Headlines (20)
+          
+          { "headline": "SpaceX Announces Plans to Launch a Luxury Hotel into Earth’s Orbit.", "isReal": false },
+          { "headline": "New App Uses AI to Translate Your Cat's Meows into Sarcastic Human Speech.", "isReal": false },
+          { "headline": "Study Finds That Taking Too Many Selfies Is Linked to a Rare Mental Condition.", "isReal": false },
+          { "headline": "A Town in Wyoming Elected a Goat as Its Honorary Mayor.", "isReal": false },
+          { "headline": "Scientists Have Designed a New Type of \"Forever\" Plastic That Can Dissolve in Water.", "isReal": false },
+          { "headline": "World’s Largest Library Is Now Offering Human Librarians as \"Book Recommendations.\"", "isReal": false },
+          { "headline": "Germany Passes a Law Requiring All New Homes to Be Built with Rooftop Gardens.", "isReal": false },
+          { "headline": "Google AI Accidentally Creates a New, More Efficient Type of Concrete.", "isReal": false },
+          { "headline": "A New York City Restaurant Is Charging $50 to Keep Your Phone Off the Table.", "isReal": false },
+          { "headline": "Scientists Discover a New Mineral That Generates Electricity When Exposed to Jazz Music.", "isReal": false },
           { "headline": "Due to safety concerns, all circular kitchen tables are being recalled worldwide.", "isReal": false },
           { "headline": "NASA confirmed that the moon is slowly turning green due to accumulated space moss.", "isReal": false },
           { "headline": "New evidence suggests historical Vikings actually used rubber ducks as navigation tools.", "isReal": false },
@@ -656,8 +654,22 @@
 
             // Calculate the trigger's absolute Z position
             const triggerZ = nextHeadline.tile.position.z + nextHeadline.trigger.position.z;
+            
+            // --- FIX: Missed Gate Detection (Prevents Freeze) ---
+            // If the gate has passed the player (Z > 2), it means the player missed the choice.
+            // This prevents the headline from getting stuck in the queue and freezing the spawns.
+            if (triggerZ > 2) { 
+                // Immediately remove the stuck headline, but end the game first.
+                // Missing a choice means game over.
+                gameOver();
+                nextHeadline.passed = true;
+                headlineQueue.shift();
+                currentHeadline = null; 
+                return; 
+            }
+            // --- END FIX ---
 
-            // a) Display headline when player is approaching (trigger Z is between -80 and 0)
+            // a) Display headline when player is approaching
             const displayDistance = 80; 
             if (triggerZ > player.position.z - displayDistance && triggerZ < player.position.z) {
                  if (currentHeadline !== nextHeadline) {
@@ -669,7 +681,7 @@
             }
             
             // b) Check for passing point (when player crosses the trigger's Z)
-            // We check a small window around the player's Z position
+            // We check a small window around the player's Z position (0)
             if (triggerZ > player.position.z - (playerSpeed / 2) && 
                 triggerZ < player.position.z + (playerSpeed / 2)) 
             {
@@ -684,7 +696,7 @@
                     score++;
                     scoreDisplay.textContent = `Score: ${score}`;
                 } else {
-                    // Game Over: Incorrect lane selected
+                    // Game Over: Incorrect lane selected OR stayed in the middle lane (1)
                     gameOver();
                 }
                 
