@@ -31,7 +31,6 @@
             justify-content: center;
             color: white;
             text-align: center;
-            /* FIX: Removed pointer-events: none; so the menu button is clickable. */
         }
         
         #message-box {
@@ -518,8 +517,9 @@
                     tile.position.z += deltaZ;
 
                     // Check if tile is behind the camera (needs recycling)
-                    // FIX: Changed recycling point from camera.position.z (10) to 20 to give the headline time to display.
-                    if (tile.position.z > 20) { 
+                    // FIX: Increased recycling point from 20 to 50 to ensure the headline object 
+                    // stays in the scene long enough for the display logic to trigger reliably.
+                    if (tile.position.z > 50) { 
                         // Remove tile from scene and array
                         scene.remove(tile);
                         tiles.shift(); // Remove from front of array
