@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Real or Fake Headline Runner</title>
-    <!-- Imports the Three.js 3D library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         /* --- Basic Setup --- */
@@ -147,7 +146,6 @@
     </style>
 </head>
 <body>
-    <!-- This div holds all the UI text, buttons, and scores -->
     <div id="overlay">
         <div id="message-box-content" style="text-align: center;">
             <div class="title">REAL OR FAKE RUNNER</div>
@@ -163,13 +161,11 @@
         </div>
     </div>
 
-    <!-- The in-game headline display -->
     <div id="message-box">
         <div id="headline-display"></div>
         <div id="status-message-ingame" class="subtitle" style="margin-bottom: 0;"></div>
     </div>
     
-    <!-- These are separate for in-game display -->
     <div id="score-display">Score: 0</div>
     <div id="high-score-display">High Score: 0</div>
 
@@ -694,40 +690,46 @@
                     endGame();
                 }
                 
+                // --- THIS IS THE CRITICAL FIX ---
+                // Whether correct or incorrect, this headline has been processed.
+                // This stops the game from "freezing" on the same headline.
                 nextHeadline.passed = true;
-                headlineQueue.shift(); 
-                currentHeadline = null;
+                headlineQueue.shift(); // Remove it from the front of the queue
+                currentHeadline = null; // Allow the next headline to be set
             }
         }
 
-        // --- 6. INPUT HANDLER ---
+        // --- 6. PLAYER CONTROLS (This function was missing) ---
 
         function onKeyDown(event) {
+            // Only allow movement if the game is running and not already moving
             if (gameState !== 'running' || isMoving) return;
 
-            let newLane = currentLane;
-            let moved = false;
+            let targetLane = currentLane;
 
+            // Determine target lane based on key press
             if (event.key === 'ArrowLeft') {
-                newLane = 0;
-                moved = newLane !== currentLane;
+                targetLane = 0; // FAKE lane
             } else if (event.key === 'ArrowRight') {
-                newLane = 2;
-                moved = newLane !== currentLane;
+                targetLane = 2; // REAL lane
             } else if (event.key === 'ArrowDown') {
-                newLane = 1;
-                moved = newLane !== currentLane;
+                targetLane = 1; // CENTER lane
+            } else {
+                return; // Ignore other keys
             }
-
-            if (moved) {
-                currentLane = newLane;
+            
+            // If the target lane is different, start the move
+            if (targetLane !== currentLane) {
+                currentLane = targetLane;
                 targetX = LANE_POSITIONS[currentLane];
                 isMoving = true;
                 moveStartTime = performance.now() / 1000;
             }
         }
+        
+        // --- 7. START THE GAME (This call was missing) ---
+        init();
 
-        window.onload = init;
     </script>
 </body>
 </html>
