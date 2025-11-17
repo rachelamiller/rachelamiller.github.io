@@ -76,7 +76,7 @@ top: 0;
 left: var(--clip-position);
 width: var(--divider-width);
 height: 100%;
-background-color: #d00000; /* <-- COLOR CHANGED HERE */
+background-color: #d00000;
 z-index: 5;
 margin-left: calc(-1 * var(--divider-width) / 2); /* Center the line */
 pointer-events: none; /* Let clicks pass through to the slider input */
@@ -104,14 +104,14 @@ background: transparent;
 height: 40px; /* Make the track tall enough to easily grab */
 }
 
-/* Style the slider thumb (the circle) */
+/* Style the slider thumb (the red circle) */
 .slider-input::-webkit-slider-thumb {
 -webkit-appearance: none;
 appearance: none;
 width: 40px;
 height: 40px;
 border-radius: 50%;
-background: #d00000; /* <-- COLOR CHANGED HERE */
+background: #d00000;
 border: 3px solid #fff;
 cursor: grab;
 margin-top: -20px; /* Center the thumb vertically */
@@ -123,7 +123,7 @@ box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 width: 40px;
 height: 40px;
 border-radius: 50%;
-background: #d00000; /* <-- COLOR CHANGED HERE */
+background: #d00000;
 border: 3px solid #fff;
 cursor: grab;
 box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
@@ -154,17 +154,18 @@ right: 10px;
 </head>
 <body>
 
-<h1>Check out the changes to UNL's Temple Building</h1>
+<h1>Check out the changes UNL’s The Temple Building from the 1920s to 2025</h1>
 <div class="instructions">
-**Instructions:** Click and drag the **red circle** on the line or **slide the bar** (tap and drag on mobile) to see the 'Before' and 'After' views of the Temple Building.
+**Instructions:** Click and drag the **red circle** on the line or **slide the bar** (tap and drag on mobile) to see the 'Before' (1920s) and 'After' (2025) views of the Temple Building.
 </div>
 
 <div class="comparison-container">
-<img class="image image-new" src="TempleNew.jpg" alt="Temple Building After Renovation">
-<span class="label label-new">AFTER</span>
+<img class="image image-new" src="2025.jpg" alt="Temple Building 2025">
+<span class="label label-new">2025</span>
 
-<img class="image image-old" src="TempleOld.jpg" alt="Temple Building Before Renovation">
-<span class="label label-old">BEFORE</span>
+<img class="image image-old" src="58.jpg" alt="Temple Building 1920s">
+<span class="label label-old">1920s</span>
+
 <div class="slider-divider"></div>
 <input type="range" min="0" max="100" value="50" class="slider-input" id="imageSlider" aria-label="Image comparison slider">
 
