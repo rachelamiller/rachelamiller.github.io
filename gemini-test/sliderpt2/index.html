@@ -52,26 +52,33 @@
             height: auto;
         }
 
-        .img-before {
-            /* This is the base image (historic) */
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
+        /* This is the base image (2014) - always full width, underneath */
+        .img-base {
+            position: relative; /* Changed from absolute */
+            z-index: 1; /* Lowest layer */
         }
 
-        .img-after {
-            /* This is the overlay image (modern) */
+        /* This is the overlay image (2025) - its container controls its visible width */
+        .img-overlay-wrapper {
             position: absolute;
             top: 0;
             left: 0;
             width: 50%; /* Initial visible width (will be adjusted by JS) */
             height: 100%;
-            overflow: hidden;
-            z-index: 2;
+            overflow: hidden; /* Crucial: hides the part of the overlay image not in view */
+            z-index: 2; /* Sits on top of img-base */
         }
+        
+        .img-overlay-wrapper img {
+            /* The image inside the wrapper needs to always be full width of the container */
+            width: 100%; 
+            height: 100%;
+            object-fit: cover; /* Ensures image covers the space without distortion */
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
 
         /* --- Slider Handle (The draggable element) --- */
         .slider-handle {
@@ -143,8 +150,8 @@
     <div class="slider-container" id="image-slider">
         <img src="58.jpg" alt="UNL Temple Building 1920s" class="slider-img img-base">
 
-        <div class="img-after" id="img-after">
-            <img src="2025.jpg" alt="UNL Temple Building 2025" class="slider-img img-before">
+        <div class="img-overlay-wrapper" id="img-overlay-wrapper">
+            <img src="2025.jpg" alt="UNL Temple Building 2025" class="slider-img">
         </div>
 
         <div class="slider-handle" id="slider-handle">
@@ -154,23 +161,29 @@
 
     <script>
         const sliderContainer = document.getElementById('image-slider');
-        const imgAfter = document.getElementById('img-after');
+        const imgOverlayWrapper = document.getElementById('img-overlay-wrapper'); // Changed ID
         const sliderHandle = document.getElementById('slider-handle');
         const baseImg = sliderContainer.querySelector('.img-base');
 
         // Set the height of the container based on the image aspect ratio once it loads
         baseImg.onload = () => {
             sliderContainer.style.height = `${baseImg.offsetHeight}px`;
+            // Set initial position after image loads
+            moveSlider(sliderContainer.offsetWidth / 2 + sliderContainer.getBoundingClientRect().left);
         };
 
         // Fallback for when the image is already loaded/cached
         if (baseImg.complete) {
             sliderContainer.style.height = `${baseImg.offsetHeight}px`;
+            // Set initial position for already loaded images
+            moveSlider(sliderContainer.offsetWidth / 2 + sliderContainer.getBoundingClientRect().left);
         }
         
-        // Adjust container height on window resize to maintain aspect ratio
+        // Adjust container height and slider position on window resize to maintain aspect ratio
         window.onresize = () => {
              sliderContainer.style.height = `${baseImg.offsetHeight}px`;
+             // Recalculate and set slider position relative to new container width
+             moveSlider(sliderHandle.getBoundingClientRect().left + (sliderHandle.offsetWidth / 2));
         };
 
         let isDragging = false;
@@ -192,8 +205,8 @@
             // Convert position to a percentage width for responsiveness
             const percentageWidth = (newPositionX / containerRect.width) * 100;
 
-            // Apply the new position to the overlay image and the handle
-            imgAfter.style.width = `${percentageWidth}%`;
+            // Apply the new position to the overlay image wrapper and the handle
+            imgOverlayWrapper.style.width = `${percentageWidth}%`; // This is the fix!
             sliderHandle.style.left = `${percentageWidth}%`;
         }
         
