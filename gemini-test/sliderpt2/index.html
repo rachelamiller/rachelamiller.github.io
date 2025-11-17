@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNL Temple Building Change Slider</title>
+    <style>
+        /* --- General Styling --- */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            padding: 20px 10px 10px;
+        }
+
+        .instructions {
+            background-color: #e9e9e9;
+            border-left: 5px solid #d00000; /* UNL-inspired color */
+            padding: 10px;
+            margin: 0 10px 20px;
+            max-width: 800px;
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* --- Slider Container --- */
+        .slider-container {
+            position: relative;
+            max-width: 800px; /* Max width for responsiveness */
+            width: 95%;
+            height: auto; /* Height will be set by the image aspect ratio */
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border: 1px solid #ccc;
+            cursor: ew-resize; /* Indicates it can be dragged horizontally */
+            margin-bottom: 20px;
+        }
+
+        /* --- Images --- */
+        .slider-img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .img-before {
+            /* This is the base image (historic) */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .img-after {
+            /* This is the overlay image (modern) */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%; /* Initial visible width (will be adjusted by JS) */
+            height: 100%;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        /* --- Slider Handle (The draggable element) --- */
+        .slider-handle {
+            position: absolute;
+            top: 0;
+            left: 50%; /* Initial position (center) */
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background-color: white;
+            z-index: 3;
+            cursor: grab;
+        }
+
+        .slider-handle-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: white;
+            border: 3px solid #d00000; /* UNL Red */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #d00000;
+            font-weight: bold;
+        }
+        
+        /* Arrows for visual cue */
+        .slider-handle-circle::before, .slider-handle-circle::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+        }
+
+        .slider-handle-circle::before {
+            border-width: 8px 10px 8px 0;
+            border-color: transparent #d00000 transparent transparent;
+            left: -8px;
+        }
+
+        .slider-handle-circle::after {
+            border-width: 8px 0 8px 10px;
+            border-color: transparent transparent transparent #d00000;
+            right: -8px;
+        }
+
+        .slider-handle:active .slider-handle-circle {
+            cursor: grabbing;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Check out the changes UNL’s The Temple Building from the 1920s to 2025</h1>
+
+    <div class="instructions">
+        **Instructions:** Drag the red handle (or swipe on a mobile device) to the left or right to compare the difference between the 1920s image (left) and the 2025 image (right).
+    </div>
+    
+    <div class="slider-container" id="image-slider">
+        <img src="58.jpg" alt="UNL Temple Building 1920s" class="slider-img img-base">
+
+        <div class="img-after" id="img-after">
+            <img src="IMG_4218.jpg" alt="UNL Temple Building 2025" class="slider-img img-before">
+        </div>
+
+        <div class="slider-handle" id="slider-handle">
+            <div class="slider-handle-circle"></div>
+        </div>
+    </div>
+
+    <script>
+        const sliderContainer = document.getElementById('image-slider');
+        const imgAfter = document.getElementById('img-after');
+        const sliderHandle = document.getElementById('slider-handle');
+        const baseImg = sliderContainer.querySelector('.img-base');
+
+        // Set the height of the container based on the image aspect ratio once it loads
+        baseImg.onload = () => {
+            sliderContainer.style.height = `${baseImg.offsetHeight}px`;
+        };
+
+        // Fallback for when the image is already loaded/cached
+        if (baseImg.complete) {
+            sliderContainer.style.height = `${baseImg.offsetHeight}px`;
+        }
+        
+        // Adjust container height on window resize to maintain aspect ratio
+        window.onresize = () => {
+             sliderContainer.style.height = `${baseImg.offsetHeight}px`;
+        };
+
+        let isDragging = false;
+
+        // --- Core Drag Function ---
+        function moveSlider(clientX) {
+            // Get the bounding box of the container
+            const containerRect = sliderContainer.getBoundingClientRect();
+            // Calculate the position of the pointer relative to the container's left edge
+            let newPositionX = clientX - containerRect.left;
+            
+            // Constrain the position to be within the container bounds
+            if (newPositionX < 0) {
+                newPositionX = 0;
+            } else if (newPositionX > containerRect.width) {
+                newPositionX = containerRect.width;
+            }
+
+            // Convert position to a percentage width for responsiveness
+            const percentageWidth = (newPositionX / containerRect.width) * 100;
+
+            // Apply the new position to the overlay image and the handle
+            imgAfter.style.width = `${percentageWidth}%`;
+            sliderHandle.style.left = `${percentageWidth}%`;
+        }
+        
+        // --- Desktop (Mouse) Events ---
+
+        // Start dragging
+        sliderHandle.addEventListener('mousedown', (e) => {
+            e.preventDefault(); // Prevents default browser actions like text selection
+            isDragging = true;
+            sliderHandle.style.cursor = 'grabbing';
+        });
+
+        // Dragging (only if dragging started)
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                moveSlider(e.clientX);
+            }
+        });
+
+        // Stop dragging
+        document.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                sliderHandle.style.cursor = 'grab';
+            }
+        });
+
+
+        // --- Mobile (Touch) Events ---
+        
+        // Start dragging
+        sliderHandle.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            // Get the first touch point's clientX
+            moveSlider(e.touches[0].clientX);
+        }, { passive: true });
+
+        // Dragging
+        document.addEventListener('touchmove', (e) => {
+            if (isDragging) {
+                // Get the first touch point's clientX
+                moveSlider(e.touches[0].clientX);
+            }
+        }, { passive: true });
+
+        // Stop dragging
+        document.addEventListener('touchend', () => {
+            isDragging = false;
+        }, { passive: true });
+
+    </script>
+</body>
+</html>
