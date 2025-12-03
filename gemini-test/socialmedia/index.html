@@ -3,50 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Screen Reflections: Social Media & Youth</title>
+    <title>Screen Reflections: Young Adults and the Social Media Echo</title>
 
     <style>
-        /* CSS will be inserted here */
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: #1a2a3a;
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0 0 5px 0;
+            font-size: 2.5em;
+        }
+
+        header p {
+            opacity: 0.8;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        h2 {
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+
+        /* Video Section Layout */
+        #video-container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap; /* Allows wrapping on smaller screens */
+        }
+
+        .video-player {
+            flex: 2; /* Takes up more space */
+            min-width: 300px;
+            position: relative; /* Essential for overlay positioning */
+            background-color: black;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Updated to target the iframe element */
+        #main-video { 
+            display: block;
+            width: 100%; 
+            height: 440px; /* Fixed height for YouTube embeds */
+        }
+
+        #interview-list {
+            flex: 1; /* Takes up less space */
+            min-width: 200px;
+            max-height: 480px; /* Aligned with video player height */
+            overflow-y: auto; 
+            padding-right: 10px;
+        }
+        
+        /* Custom scrollbar for better look (optional) */
+        #interview-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        #interview-list::-webkit-scrollbar-thumb {
+            background-color: #ccc;
+            border-radius: 3px;
+        }
+
+        .video-select {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            background-color: white;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 5px;
+        }
+
+        .video-select:hover, .video-select.active {
+            background-color: #e9ecef;
+            border-color: #007bff;
+            box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2);
+        }
+
+        .video-select img {
+            width: 60px;
+            height: 40px;
+            object-fit: cover;
+            margin-right: 15px;
+            border-radius: 4px;
+        }
+
+        /* Hotspot Styling */
+        #hotspot-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .hotspot {
+            position: absolute;
+            background-color: rgba(0, 123, 255, 0.85);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            cursor: pointer;
+            pointer-events: auto;
+            opacity: 1; 
+            transition: background-color 0.2s;
+            z-index: 10;
+        }
+
+        .hotspot:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            #video-container {
+                flex-direction: column;
+            }
+            .video-player {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Screen Reflections</h1>
-        <p>Unfiltered stories from the generation navigating life in the digital age.</p>
+        <h1>Screen Reflections: Young Adults and the Social Media Echo</h1>
+        <p>Unfiltered stories from the generation navigating life, self-worth, and mental health in the digital age.</p>
     </header>
 
     <main>
         <section id="interviews">
-            <h2>The Interviews</h2>
+            <h2>The Interviews: Hear Their Stories</h2>
             <div id="video-container">
                 <div class="video-player">
-                    <iframe id="main-video" width="100%" height="400" src="YOUR_YOUTUBE_EMBED_URL_HERE" frameborder="0" allowfullscreen></iframe>
+                    <iframe id="main-video" width="100%" height="440" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    
                     <div id="hotspot-overlay">
                         </div>
                 </div>
 
                 <div id="interview-list">
-                    <button class="video-select" data-video-url="VIDEO_URL_1" data-hotspots='[{"time": 10, "topic": "Anxiety"}, {"time": 45, "topic": "FOMO"}]'>
-                        <img src="THUMBNAIL_IMAGE_1" alt="Interview 1">
-                        <p>Alex, 21: The Comparison Trap</p>
+                    
+                    <button class="video-select" 
+                            data-video-url="https://www.youtube.com/embed/_CtBh8F-nvs" 
+                            data-hotspots='[
+                                {"time": 2, "topic": "Feeling Clear"}, 
+                                {"time": 45, "topic": "Content Authenticity"},
+                                {"time": 102, "topic": "Doomscrolling"},
+                                {"time": 136, "topic": "Filling Time"},
+                                {"time": 213, "topic": "Non-Digital Engagement"}
+                            ]'>
+                        <img src="https://via.placeholder.com/60x40?text=I1" alt="Interview 1 Thumbnail">
+                        <p>Interview 1: Productivity, Realism, & Down Time</p>
                     </button>
-                    <button class="video-select" data-video-url="VIDEO_URL_2" data-hotspots='[{"time": 5, "topic": "Validation"}, {"time": 60, "topic": "Authenticity"}]'>
-                        <img src="THUMBNAIL_IMAGE_2" alt="Interview 2">
-                        <p>Maria, 19: Seeking Digital Validation</p>
+                    
+                    <button class="video-select" 
+                            data-video-url="https://www.youtube.com/embed/7IUfbLF0Oow" 
+                            data-hotspots='[
+                                {"time": 2, "topic": "Curating an Image"}, 
+                                {"time": 30, "topic": "Body Image Pressure"},
+                                {"time": 68, "topic": "Mental Health Drain"},
+                                {"time": 93, "topic": "The 'Perfect' Look"},
+                                {"time": 120, "topic": "Deleting Apps"}
+                            ]'>
+                        <img src="https://via.placeholder.com/60x40?text=I2" alt="Interview 2 Thumbnail">
+                        <p>Interview 2: Body Image & Public Pressure</p>
                     </button>
-                    </div>
+                    
+                    <button class="video-select" 
+                            data-video-url="https://www.youtube.com/embed/X_i4QFydNW4" 
+                            data-hotspots='[
+                                {"time": 5, "topic": "Instant Validation"}, 
+                                {"time": 35, "topic": "Dopamine Hit"},
+                                {"time": 80, "topic": "Comparing Likes"},
+                                {"time": 115, "topic": "Creating for Views"},
+                                {"time": 150, "topic": "Negative Comments"}
+                            ]'>
+                        <img src="https://via.placeholder.com/60x40?text=I3" alt="Interview 3 Thumbnail">
+                        <p>Interview 3: The Need for Digital Validation</p>
+                    </button>
+                </div>
             </div>
+            
+            <section id="analysis">
+                <h2>The Analysis: Context and Themes</h2>
+                <p>These three interviews highlight key contrasting and overlapping themes...</p>
+            </section>
         </section>
-
-        </main>
+    </main>
 
     <footer>
         <p>&copy; 2025 Screen Reflections Project</p>
     </footer>
 
     <script>
-        // JavaScript will be inserted here
+        document.addEventListener('DOMContentLoaded', () => {
+            // Target the YouTube iFrame element
+            const mainVideo = document.getElementById('main-video'); 
+            const videoButtons = document.querySelectorAll('.video-select');
+            const hotspotOverlay = document.getElementById('hotspot-overlay');
+            
+            // This function handles switching the video source and generating hotspots
+            function loadVideo(url, hotspotsData) {
+                // 1. Update the iFrame source
+                mainVideo.src = url;
+
+                // 2. Clear existing hotspots
+                hotspotOverlay.innerHTML = '';
+
+                // 3. Create new hotspots
+                hotspotsData.forEach((data, index) => {
+                    const hotspot = document.createElement('div');
+                    hotspot.className = 'hotspot';
+                    hotspot.textContent = data.topic;
+                    hotspot.title = `Time: ${data.time} seconds. (Note: Time-jump requires YouTube API)`;
+                    
+                    // Simple positioning logic to spread them out on the video overlay
+                    const top = 20 + (index * 15) % 60;
+                    const left = 15 + (index * 25) % 70;
+
+                    hotspot.style.top = `${top}%`;
+                    hotspot.style.left = `${left}%`;
+                    hotspot.style.opacity = 1;
+
+                    // Hotspot click listener: Jumps to the specified time and plays
+                    hotspot.addEventListener('click', () => {
+                        // NOTE: Since this uses a standard YouTube iFrame, we cannot jump to a specific time without the YouTube iFrame Player API.
+                        // For now, it simply reloads the video and marks the intended jump time.
+                        console.log(`Hotspot clicked: ${data.topic}. Time-jump attempt at ${data.time}s.`);
+                    });
+
+                    hotspotOverlay.appendChild(hotspot);
+                });
+            }
+
+            // Attach click listeners to all video selection buttons
+            videoButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const newUrl = button.getAttribute('data-video-url');
+                    let hotspots;
+                    try {
+                        hotspots = JSON.parse(button.getAttribute('data-hotspots'));
+                    } catch (e) {
+                        console.error("Error parsing hotspot data:", e);
+                        hotspots = [];
+                    }
+
+                    loadVideo(newUrl, hotspots);
+
+                    // Highlight the currently selected button
+                    videoButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                });
+            });
+
+            // Manually trigger the load for the first video on page load 
+            if (videoButtons.length > 0) {
+                // Simulating a click on the first button to initialize the player
+                videoButtons[0].click(); 
+            }
+        });
     </script>
 </body>
 </html>
